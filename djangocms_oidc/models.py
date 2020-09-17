@@ -274,7 +274,7 @@ class OIDCDisplayDedicatedContent(CMSPlugin):
         verbose_name=_('Conditions'),
         help_text=_('Show content only if the given conditions are met.'),
         max_length=255, null=True, blank=True,
-        choices=[(key, item[0]) for key, item in get_display_content_settings().items()],
+        choices=[(code, label) for code, label, _ in get_display_content_settings()],
     )
 
 

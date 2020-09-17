@@ -82,8 +82,9 @@ class OIDCDisplayDedicatedContentPlugin(CMSPluginBase):
         if instance.conditions is None:
             context['content_permitted_to_user'] = user_info is not None
         else:
-            context['content_permitted_to_user'] = get_display_content_settings()[instance.conditions][1](
-                context, instance, placeholder, user_info)
+            for code, _, fnc in get_display_content_settings():
+                if code == instance.conditions:
+                    context['content_permitted_to_user'] = fnc(context, instance, placeholder, user_info)
         return context
 
 

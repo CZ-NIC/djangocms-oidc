@@ -192,6 +192,9 @@ msgstr "OIDC Zobrazit atribut Země"
 msgid "Only authenticated user"
 msgstr "Jen přihlášený uživatel"
 
+msgid "Only user is staff"
+msgstr "Jen editor"
+
 msgid "OpenID Connect"
 msgstr "OpenID Connect"
 

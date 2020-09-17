@@ -11,8 +11,14 @@ def get_cache_key(key):
     return "{}{}".format(get_cms_setting('CACHE_PREFIX'), key)
 
 
+def only_user_is_staff(context, instance, placeholder, user_info):
+    request = context['request']
+    return hasattr(request, "user") and request.user.is_staff
+
+
 def only_authenticated_user(context, instance, placeholder, user_info):
-    return context['request'].user.is_authenticated
+    request = context['request']
+    return hasattr(request, "user") and request.user.is_authenticated
 
 
 def email_verified(context, instance, placeholder, user_info):
@@ -29,7 +35,9 @@ def email_verified(context, instance, placeholder, user_info):
     return len(messages) == 0
 
 
-DEFAULT_DISPLAY_CONTENT = {
-    'only_authenticated_user': (_('Only authenticated user'), only_authenticated_user),
-    'email_verified': (_('Email verified'), email_verified),
-}
+DEFAULT_DISPLAY_CONTENT = [
+    # (Choice code, choice label, function)
+    ('only_authenticated_user', _('Only authenticated user'), only_authenticated_user),
+    ('only_user_is_staff', _('Only user is staff'), only_user_is_staff),
+    ('email_verified', _('Email verified'), email_verified),
+]
