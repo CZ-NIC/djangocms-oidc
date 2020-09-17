@@ -1,0 +1,12 @@
+{% extends change_form_template|default:"admin/cms/page/plugin/change_form.html" %}
+{% load i18n %}
+
+{% block content %}
+    <p>
+        {% blocktrans trimmed %}
+            This plugin shows the logged in user the identity from the provider paired with his account.
+            The user can delete them.
+        {% endblocktrans %}
+    </p>
+    {{ block.super }}
+{% endblock %}

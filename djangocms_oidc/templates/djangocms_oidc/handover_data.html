@@ -1,0 +1,51 @@
+{% load i18n %}
+<span class="djangocms-oidc">
+    {% if djangocms_oidc_user_info %}
+        {% trans "You are verified as" %} <span class="djangocms-oidc-verified_as">{% spaceless %}
+            {% if instance.provider.account_url %}
+                <a href="{{ instance.provider.account_url }}" class="djangocms-oidc-account {{ instance.provider.slug }}">{{ djangocms_oidc_verified_as }}</a>
+            {% else %}
+                {{ djangocms_oidc_verified_as }}
+            {% endif %}
+        {% endspaceless %}</span>.
+        <a href="{% url 'djangocms_oidc_dismiss' %}" class="djangocms-oidc-dismiss {{ instance.provider.slug }}" title="{% spaceless %}
+            {% blocktrans with provider_name=instance.provider.name trimmed %}
+                Dismiss data from {{ provider_name }}.
+            {% endblocktrans %}
+        {% endspaceless %}">{% trans "Dismiss" %}</a>
+        {% if all_required_handovered %}
+            <a href="{% url 'djangocms_oidc_signup' instance.consumer_type instance.pk %}" class="djangocms-oidc-signup update-data {{ instance.provider.slug }}"
+                data-consumer_type="{{ registratin_consumer_info.consumer_type }}"
+                data-client_id="{{ registratin_consumer_info.client_id|default_if_none:"" }}"
+                data-expires_at="{{ registratin_consumer_info.expires_at|default_if_none:""|date:"c" }}">
+                {% trans "Update data" %}
+            </a>
+        {% else %}
+            <span class="all-required-not-handovered">
+                <span>{% trans "Not all required data has been handovered." %}</span>
+                <a href="{% url 'djangocms_oidc_signup' instance.consumer_type instance.pk 'consent' %}" class="djangocms-oidc-signup remaining-data {{ instance.provider.slug }}"
+                    data-consumer_type="{{ registratin_consumer_info.consumer_type }}"
+                    data-client_id="{{ registratin_consumer_info.client_id|default_if_none:"" }}"
+                    data-expires_at="{{ registratin_consumer_info.expires_at|default_if_none:""|date:"c" }}">
+                    {% trans "Handover the remaining data" %}
+                </a>
+            </span>
+        {% endif %}
+        {% if instance.provider.logout_url %}
+            <div>
+                {% blocktrans with logout_url=instance.provider.logout_url provider_name=instance.provider.name provider_slug=instance.provider.slug trimmed %}
+                    You can also log out of provider <a href="{{ logout_url }}" class="djangocms-oidc-logout {{ provider_slug }}">{{ provider_name }}</a> if you wish.
+                {% endblocktrans %}
+            </div>
+        {% endif %}
+    {% else %}
+        <a href="{% url 'djangocms_oidc_signup' instance.consumer_type instance.pk %}" class="djangocms-oidc-signup {{ instance.provider.slug }}"
+            data-consumer_type="{{ registratin_consumer_info.consumer_type }}"
+            data-client_id="{{ registratin_consumer_info.client_id|default_if_none:"" }}"
+            data-expires_at="{{ registratin_consumer_info.expires_at|default_if_none:""|date:"c" }}">{% spaceless %}
+            {% blocktrans with provider_name=instance.provider.name trimmed %}
+                Data handover from {{ provider_name }}
+            {% endblocktrans %}
+        {% endspaceless %}</a>
+    {% endif %}
+</span>

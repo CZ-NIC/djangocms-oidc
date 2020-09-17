@@ -1,0 +1,5 @@
+{% load countries %}
+{% if djangocms_oidc_verified_as %}
+    {% get_country djangocms_oidc_verified_as as country %}
+    <span{% if instance.css_names %} class="{{ instance.css_names }}"{% endif %}>{{ country.name }}</span>
+{% endif %}

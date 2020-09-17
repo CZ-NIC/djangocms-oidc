@@ -1,0 +1,7 @@
+{% load cms_tags %}
+{{ dedicated_content|safe }}
+{% if user.is_authenticated or content_permitted_to_user %}
+    {% for plugin in instance.child_plugin_instances %}
+        {% with forloop as parentloop %}{% render_plugin plugin %}{% endwith %}
+    {% endfor %}
+{% endif %}

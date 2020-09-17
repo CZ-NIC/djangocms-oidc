@@ -1,0 +1,60 @@
+{% extends change_form_template|default:"admin/cms/page/plugin/change_form.html" %}
+{% load i18n %}
+
+{% block content %}
+    <p>
+        {% if plugin.can_login %}
+            {% blocktrans trimmed %}
+                This plugin is used to log in a user through authentication with an identity provider.
+                If you only want to handover data from the identity provider, but not log in the user, use the "OIDC Handover data".
+                Caution! If the plugin creates new users! If you do not want to create them, check the "No new user" radio button.
+                When this switch is checked, the plugin pairs the identity from the provider with the logged in user.
+            {% endblocktrans %}
+        {% else %}
+            {% blocktrans trimmed %}
+                This plugin is only used to handover data from the identity provider.
+                Use the "OIDC Login" plugin to log users in.
+            {% endblocktrans %}
+        {% endif %}
+    </p>
+    {{ block.super }}
+    <h4>{% trans "Claims example:" %}</h4>
+    <pre>
+{
+    "userinfo": {
+        "openid2_id": {"essential": true},
+        "preferred_username": {"essential": false},
+        "updated_at": {"essential": false},
+
+        "name": {"essential": false},
+        "given_name": {"essential": true},
+        "family_name": {"essential": true},
+        "middle_name": {"essential": false},
+        "nickname": {"essential": false},
+        "address": {"essential": true},
+        "birthdate": {"essential": false},
+        "profile": {"essential": false},
+        "locale": {"essential": false},
+        "picture": {"essential": false},
+        "gender": {"essential": false},
+        "sub": {"essential": false},
+        "zoneinfo": {"essential": false},
+
+        "email": {"essential": true},
+        "email_verified": {"essential": true},
+        "phone_number": {"essential": true},
+        "phone_number_verified": {"essential": true},
+        "website": {"essential": false}
+    }
+}
+    </pre>
+
+    <h4>{% trans "Verified by names:" %}</h4>
+    <pre>name given_name+family_name preferred_username nickname email openid2_id</pre>
+    <p>
+        {% blocktrans trimmed %}
+            The list of names is scrolled in the specified order until the value is found.
+            For names composed of a plus sign, the value consist of them.
+        {% endblocktrans %}
+    </p>
+{% endblock %}

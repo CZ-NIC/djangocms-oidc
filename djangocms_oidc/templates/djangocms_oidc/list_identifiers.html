@@ -1,0 +1,22 @@
+{% load i18n static %}
+{% if user.is_authenticated %}
+    {% if user_has_identifiers %}
+        <form class="djangocms-oidc-delete-identifiers" method="post" action="{% url "djangocms_oidc_delete_identifiers" %}">
+            {% csrf_token %}
+            {{ formset.management_form }}
+            <ul class="user-identifiers">
+                {% for form in formset %}
+                    <li>
+                        {% for field in form %}
+                            {{ field }}
+                        {% endfor %}
+                        <span class="user-identity">{{ form.initial.uident }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+            <input type="submit" name="djangocms_oidc_delete_identifier" value="{% trans "Delete selected" %}">
+        </form>
+    {% else %}
+        <p class="djangocms-oidc-no-linked-identifiers">{% trans "You have no identifiers associated with the provider." %}</p>
+    {% endif %}
+{% endif %}

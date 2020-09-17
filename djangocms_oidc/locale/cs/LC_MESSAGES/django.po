@@ -1,0 +1,381 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Zdeněk Böhm <zdenek.bohm@nic.cz>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-09-09 10:15+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Zdeněk Böhm <zdenek.bohm@nic.cz>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n "
+"<= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+
+msgid "A new account has been created with the username {} and email {}."
+msgstr "Byl vytvořen nový účet pro uživatele {} a e-mail {}."
+
+msgid "Account URL"
+msgstr "Účet URL"
+
+msgid "Authorization endpoint"
+msgstr "Koncový bod autorizace"
+
+msgid "CMS Page"
+msgstr "CMS Stránka"
+
+msgid "CSS names"
+msgstr "CSS názvy"
+
+msgid "Claims"
+msgstr "Požadované údaje"
+
+msgid "Claims attributes for data handover."
+msgstr "Požadované údaje pro předání dat."
+
+msgid "Claims example:"
+msgstr "Příklad předaných údajů:"
+
+msgid "Client ID"
+msgstr "Klient ID"
+
+msgid "Client secret"
+msgstr "Klientský soukromý klíč"
+
+msgid "Code"
+msgstr "Kód"
+
+msgid "Communication with the provider failed. Please try again later."
+msgstr ""
+"Komunikace s poskytovatelem se nezdařila. Prosím, zkuste to znovu později."
+
+msgid "Communication with the provider is in progress. Please try again later."
+msgstr ""
+"Komunikace s poskytovatelem právě probíhá. Prosím, zkuste to znovu později."
+
+msgid "Conditions"
+msgstr "Podmínky"
+
+msgid ""
+"Consider the data invalid if not all the required data has been handovered."
+msgstr ""
+"Považovat údaje za neplatná, pokud nejsou předány všechny povinné položky."
+
+#, python-format
+msgid "Data handover from %(provider_name)s"
+msgstr "Údaje předané od %(provider_name)s"
+
+msgid "Default value"
+msgstr "Výchozí hodnota"
+
+msgid "Delete selected"
+msgstr "Smazat vybrané"
+
+msgid "Dismiss"
+msgstr "Zrušit"
+
+#, python-format
+msgid "Dismiss data from %(provider_name)s."
+msgstr "Zrušit údaje od %(provider_name)s."
+
+msgid ""
+"Display content only for authenticated users or users with data hangovered "
+"from provider."
+msgstr ""
+"Zobrazit obsah pouze přihlášeným uživatelům nebo uživatelům s údaji "
+"předanými od poskytovatele."
+
+msgid "Do not create a new user account if the user is not recognized."
+msgstr "Nevytvářet nový uživatelský účet, pokud uživatel nebyl rozpoznán."
+
+msgid "Email is not verified."
+msgstr "E-mail není ověřený."
+
+msgid "Email missing."
+msgstr "E-mail chybí."
+
+msgid "Email verified"
+msgstr "Ověřený e-mail"
+
+msgid "Extra class names (separated by space)."
+msgstr "Názvy dalších CSS tříd (položky oddělené mezerou)."
+
+msgid "Force consent with handovered data"
+msgstr "Vynutit souhlas s předávanými údaji"
+
+msgid "Force login"
+msgstr "Vynutit přihlášení"
+
+msgid "Handover the remaining data"
+msgstr "Předat zbývající údaje"
+
+msgid "Identifier"
+msgstr "Identifikátor"
+
+msgid "Identifier has been deleted."
+msgstr "Identifikátor byl smazán."
+
+msgid "Insist on required claims"
+msgstr "Trvat na povinných údajích"
+
+msgid "Item \"No interaction\" cannot be combined with others."
+msgstr "Položka \"Jen bez dotazování\"' nelze s ostatními kombinovat."
+
+msgid "Login"
+msgstr "Přihlásit"
+
+#, python-format
+msgid "Login by %(provider_name)s"
+msgstr "Přihlásit přes %(provider_name)s"
+
+msgid "Login failed."
+msgstr "Přihlášení se nezdařilo."
+
+msgid "Logout"
+msgstr "Odhlásit"
+
+msgid "Logout URL"
+msgstr "Odhlášení URL"
+
+msgid "Name"
+msgstr "Jméno"
+
+msgid "No interaction"
+msgstr "Jen bez dotazování"
+
+msgid "No new user"
+msgstr "Ne nový uživatel"
+
+msgid "Not all required data has been handovered."
+msgstr "Nebyly předány všechny požadované údaje."
+
+msgid ""
+"Not all required data has been handovered. Please make the transfer again "
+"and select all the required values."
+msgstr ""
+"Nebyly předány všechny požadované údaje. Prosím přihlašte se znova a vyberte "
+"všechny povinné položky."
+
+msgid ""
+"OIDC Consumer activation failed during authentication. Please try again."
+msgstr ""
+"Aktivace OIDC Consumera během autentizace se nezdařila. Prosím, zkusete to "
+"znova."
+
+msgid "OIDC Consumer activation falied. Please try again."
+msgstr "Aktivace OIDC Consumera se nezdařila. Prosím, zkusete to znova."
+
+msgid "OIDC Display dedicated content"
+msgstr "OIDC Zobrazit vyhrazený obsah"
+
+msgid "OIDC Handover data"
+msgstr "OIDC Předání údajů"
+
+msgid "OIDC List identifiers"
+msgstr "OIDC Seznam identifikátorů"
+
+msgid "OIDC Login"
+msgstr "OIDC Přihlášení"
+
+msgid "OIDC Show attribute"
+msgstr "OIDC Zobrazit atribut"
+
+msgid "OIDC Show attribute Country"
+msgstr "OIDC Zobrazit atribut Země"
+
+msgid "Only authenticated user"
+msgstr "Jen přihlášený uživatel"
+
+msgid "OpenID Connect"
+msgstr "OpenID Connect"
+
+#, python-format
+msgid "Pair by %(provider_name)s"
+msgstr "Spárovat s %(provider_name)s"
+
+msgid "Pair my account with an identity provider"
+msgstr "Spárovat můj účet s poskytovatelem identity"
+
+msgid ""
+"Pairing cannot be performed. This identifier is already paired with another "
+"account."
+msgstr ""
+"Spárování nelze provést. Tento identifikátor je již spárován s jiným účtem."
+
+msgid "Prompt"
+msgstr "Výzva"
+
+msgid ""
+"Prompt for user at authorization. \"No interaction\" cannot be combined with "
+"others."
+msgstr ""
+"Výzva na uživatele při autorizaci. \"Jen bez dotazování\"' nelze s ostatními "
+"kombinovat."
+
+msgid "Provider name"
+msgstr "Název poskytovatele"
+
+msgid "Provider unique identifier."
+msgstr "Unikátní identifikátor poskytovatele."
+
+msgid "Redirect to the page after login or hangover data."
+msgstr "Přesměrování na stránku po přihlášení nebo předání údajů."
+
+msgid "Register consumer"
+msgstr "Registrovat odběratele"
+
+msgid "Register consumer URL"
+msgstr "Registrovat odběratele URL"
+
+msgid ""
+"Register consumer automaticaly, when it is not. (Client ID and secret "
+"missing)."
+msgstr ""
+"Automaticky registrovat odběratele, pokud není. (Klient ID a soukromý klíč "
+"chybí)."
+
+msgid ""
+"Register consumer on the provider, when Client ID and secret are not set."
+msgstr ""
+"Registrovat odběratele u poskytovatele, pokud Klient ID a soukromý klíč "
+"nejsou zadány."
+
+msgid "Registration name"
+msgstr "Název registrace"
+
+msgid "Show content only if the given conditions are met."
+msgstr "Zobrazit obsah jen pokud jsou dané podmínky splněny."
+
+msgid "Show this text when attribute has not been handovered."
+msgstr "Zobrazit tento text v případě, že údaj nebyl předsán."
+
+#, python-format
+msgid ""
+"The \"%(key)s\" must be a dictionary type: \"%(key)s\": {\"essential\": "
+"true},"
+msgstr ""
+"Položka \"%(key)s\" musí být typu slovnik: \"%(key)s\": {\"essential\": "
+"true},"
+
+#, python-format
+msgid ""
+"The \"%(key)s\" value must contain key \"essential\": \"%(key)s\": "
+"{\"essential\": true},"
+msgstr ""
+"Položka \"%(key)s\" musí obsahovat klíč \"essential\": \"%(key)s\": "
+"{\"essential\": true},"
+
+msgid "The account has been successfully paired with the provider."
+msgstr "Účet byl úspěšně spárován s poskytovatelem."
+
+msgid ""
+"The list of names is scrolled in the specified order until the value is "
+"found. For names composed of a plus sign, the value consist of them."
+msgstr ""
+"Prochází se seznam názvů atributů podle zadaného pořadí, dokud není nalezena "
+"hodnota. U názvů složených symbolem plus se údaje složí do jedné hodnoty."
+
+msgid "The value is required if \"Register consumer\" is not set."
+msgstr "Hodnota je povinná, pokud není nastaveno \"Registrovat odběratele\"."
+
+msgid "The value must be a dictionary type: {}"
+msgstr "Hodnota musí být typu slovnik: {}"
+
+#, python-format
+msgid ""
+"The value of \"essential\" must be a boolean type\": \"%(key)s\": "
+"{\"essential\": true},"
+msgstr ""
+"Hodnota \"essential\" musí být typu boolean\": \"%(key)s\": {\"essential\": "
+"true},"
+
+msgid ""
+"This plugin is only used to handover data from the identity provider. Use "
+"the \"OIDC Login\" plugin to log users in."
+msgstr ""
+"Tento plugin slouží pouze k předání dat od poskytovatele identity. Chcete-li "
+"uživatele přihlásit, použijte plugin \"OIDC Přihlášení\"."
+
+msgid ""
+"This plugin is used to log in a user through authentication with an identity "
+"provider. If you only want to handover data from the identity provider, but "
+"not log in the user, use the \"OIDC Handover data\". Caution! If the plugin "
+"creates new users! If you do not want to create them, check the \"No new user"
+"\" radio button. When this switch is checked, the plugin pairs the identity "
+"from the provider with the logged in user."
+msgstr ""
+"Tento plugin slouží k přihlášení uživatele přes ověření u poskytovatele "
+"identity. Chcete-li pouze od poskytovatele identity předat údaje, ale "
+"uživatele nepřihlašovat, tak použijte plugin \"OIDC Předání údajů\". Pozor! "
+"Plugin vytváří nové uživatele! Pokud je vytvářet nechcete, tak zatrhněte "
+"přepínač \"Ne nový uživatel\". Při zatržení tohoto přepínače plugin spáruje "
+"identitu od poskytovatele s přihlášeným uživatelem."
+
+msgid ""
+"This plugin shows the logged in user the identity from the provider paired "
+"with his account. The user can delete them."
+msgstr ""
+"Tento plugin zobrazuje přihlášenému uživateli identity od poskytovatele "
+"spárované s jeho účtem. Uživatel je může smazat."
+
+msgid "To pair with your identity provider, log in first."
+msgstr "Pro spárování s vaším poskytovatelem identity se nejdříve přihlašte."
+
+msgid "To pair your account with an identity provider, sign in first."
+msgstr ""
+"Pro spárování vašeho účtu s poskytovatelem identity se nejdříve přihlašte."
+
+msgid "Token endpoint"
+msgstr "Koncový bod tokenu"
+
+msgid "Update data"
+msgstr "Aktualizovat údaje"
+
+msgid "Used, for example, as a css class for a button or link."
+msgstr "Použito, například, jako css třída pro tlačítko nebo odkaz."
+
+msgid "User"
+msgstr "Uživatel"
+
+msgid "User endpoint"
+msgstr "Koncový bod uživatele"
+
+msgid "Verified by names"
+msgstr "Ověření podle názvů"
+
+msgid "Verified by names (separated by space)."
+msgstr "Ověření přes názvy (položky oddělené mezerou)."
+
+msgid ""
+"Verified by names (separated by space). Eg.: name given_name+family_name "
+"preferred_username nickname email openid2_id"
+msgstr ""
+"Ověření přes názvy (položky oddělené mezerou). Např. name given_name"
+"+family_name preferred_username nickname email openid2_id"
+
+msgid "Verified by names:"
+msgstr "Ověření podle položek:"
+
+msgid "You are verified as"
+msgstr "Jste ověřeni jako"
+
+#, python-format
+msgid ""
+"You can also log out of provider <a href=\"%(logout_url)s\" class="
+"\"djangocms-oidc-logout %(provider_slug)s\">%(provider_name)s</a> if you "
+"wish."
+msgstr ""
+"Chcete-li, můžete se také od poskytovatele <a href=\"%(logout_url)s\" class="
+"\"djangocms-oidc-logout %(provider_slug)s\">%(provider_name)s</a> odhlásit."
+
+msgid "You have no identifiers associated with the provider."
+msgstr "Nemáte žádné identifikátory navázané k poskytovateli."
+
+msgid "Your account is deactivated. Please contact our support."
+msgstr "Váš účet je deaktivován. Prosím kontaktujte naši podporu."
