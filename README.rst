@@ -10,7 +10,7 @@ Installation
 
 .. code-block:: shell
 
-    $ pip install git+https://github.com/CZ-NIC/djangocms-oidc@28230-create-plugin
+    $ pip install git+https://github.com/CZ-NIC/djangocms-oidc
 
 
 Caution! If you are using project `django-python3-ldap <https://github.com/etianen/django-python3-ldap>`_, you must use version higher than ``0.11.3``.
@@ -89,7 +89,7 @@ Install DjangoCMS and this projects:
 .. code-block:: shell
 
     $ pip install djangocms-installer
-    $ pip install git+https://github.com/CZ-NIC/djangocms-oidc@28230-create-plugin
+    $ pip install git+https://github.com/CZ-NIC/djangocms-oidc
 
 Create CMS testing site and go to the main project folder:
 
