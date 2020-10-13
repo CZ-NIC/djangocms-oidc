@@ -1,3 +1,12 @@
+.. image:: https://travis-ci.org/CZ-NIC/djangocms-oidc.svg?branch=master
+   :alt: Build Status
+   :target: https://travis-ci.org/CZ-NIC/djangocms-oidc
+
+.. image:: https://codecov.io/gh/CZ-NIC/djangocms-oidc/branch/master/graph/badge.svg
+   :alt: Coverage
+   :target: https://codecov.io/gh/CZ-NIC/djangocms-oidc
+
+
 ===============================
 DjangoCMS OIDC (OpenID Connect)
 ===============================
