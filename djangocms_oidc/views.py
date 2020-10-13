@@ -1,4 +1,5 @@
 import json
+import logging
 from urllib.parse import urlencode, urlparse
 
 from django.contrib import messages
@@ -8,16 +9,13 @@ from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import View
-from mozilla_django_oidc.utils import (absolutify,
-                                       add_state_and_nonce_to_session,
-                                       import_from_settings)
-from mozilla_django_oidc.views import (OIDCAuthenticationCallbackView,
-                                       OIDCAuthenticationRequestView,
-                                       get_next_url)
+from mozilla_django_oidc.utils import absolutify, add_state_and_nonce_to_session, import_from_settings
+from mozilla_django_oidc.views import OIDCAuthenticationCallbackView, OIDCAuthenticationRequestView, get_next_url
 
 from .constants import DJNAGOCMS_PLUGIN_SESSION_KEY, DJNAGOCMS_USER_SESSION_KEY
-from .helpers import (get_consumer, get_user_identifiers_formset,
-                      load_consumer, set_consumer)
+from .helpers import get_consumer, get_user_identifiers_formset, load_consumer, set_consumer
+
+LOGGER = logging.getLogger("djangocms_oidc")
 
 
 class OIDCSignupView(View):
@@ -40,7 +38,7 @@ class OIDCSignupView(View):
 
     def get(self, request, consumer_type, plugin_id, prompt=None):
         """Keep plugin ID and redirect to the OIDC consumer."""
-        consumer = load_consumer(request, consumer_type, plugin_id)
+        consumer = load_consumer(consumer_type, plugin_id)
         if consumer is None:
             messages.error(request, _('OIDC Consumer activation falied. Please try again.'))
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
@@ -94,7 +92,7 @@ class OIDCDeleteIdentifiersView(View):
     http_method_names = ['post']
 
     def post(self, request, *args, **kwargs):
-        if 'djangocms_oidc_delete_identifier' in request.POST:
+        if request.user.is_authenticated and 'djangocms_oidc_delete_identifier' in request.POST:
             data = {'result': "NOCHANGE"}
             formset = get_user_identifiers_formset(request.user, request.POST, request.FILES)
             if formset.is_valid():
@@ -107,10 +105,13 @@ class OIDCDeleteIdentifiersView(View):
                 data['messages'] = formset.errors
             if request.is_ajax():
                 return JsonResponse(data)
-            elif 'messages' in data:
-                fnc_messages = messages.success if data['result'] == "SUCCESS" else messages.error
+            elif data['result'] == "SUCCESS":
+                messages.success(request, _("Identifier has been deleted."))
+            elif data['result'] == "NOCHANGE":
+                messages.info(request, _("No identifier has been deleted. Check one to delete."))
+            else:
                 for msg in data['messages']:
-                    fnc_messages(request, msg)
+                    messages.error(request, msg.as_text())
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
@@ -193,4 +194,4 @@ class DjangocmsOIDCAuthenticationCallbackView(OIDCAuthenticationCallbackView):
         if consumer is not None and consumer.can_login():
             messages.info(self.request, _("Login failed."))
         next_url = self.request.session.get('oidc_login_next', None)
-        return next_url or self.get_settings('LOGIN_REDIRECT_URL_FAILURE', '/')
+        return self.get_settings('LOGIN_REDIRECT_URL_FAILURE', '/') if next_url is None else next_url

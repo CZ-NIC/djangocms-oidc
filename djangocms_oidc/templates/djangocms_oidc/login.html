@@ -15,9 +15,9 @@
         {% endspaceless %}">{% trans "Dismiss" %}</a>
         {% if all_required_handovered %}
             <a href="{% url 'djangocms_oidc_signup' instance.consumer_type instance.pk %}" class="djangocms-oidc-signup update-data {{ instance.provider.slug }}"
-                data-consumer_type="{{ registratin_consumer_info.consumer_type }}"
-                data-client_id="{{ registratin_consumer_info.client_id|default_if_none:"" }}"
-                data-expires_at="{{ registratin_consumer_info.expires_at|default_if_none:""|date:"c" }}">
+                data-consumer_type="{{ registration_consumer_info.consumer_type }}"
+                data-client_id="{{ registration_consumer_info.client_id|default_if_none:"" }}"
+                data-expires_at="{{ registration_consumer_info.expires_at|default_if_none:""|date:"c" }}">
                 {% trans "Update data" %}
             </a>
         {% else %}
@@ -53,18 +53,18 @@
                 <a href="{% url 'login' %}" class="djangocms-oidc-login" title="{% trans "To pair your account with an identity provider, sign in first." %}">{% trans "Login" %}</a>
             </span>
             <a href="{% url 'djangocms_oidc_signup' instance.consumer_type instance.pk %}" class="djangocms-oidc-signup {{ instance.provider.slug }} login-required"
-                data-consumer_type="{{ registratin_consumer_info.consumer_type }}"
-                data-client_id="{{ registratin_consumer_info.client_id|default_if_none:"" }}"
-                data-expires_at="{{ registratin_consumer_info.expires_at|default_if_none:""|date:"c" }}">{% spaceless %}
+                data-consumer_type="{{ registration_consumer_info.consumer_type }}"
+                data-client_id="{{ registration_consumer_info.client_id|default_if_none:"" }}"
+                data-expires_at="{{ registration_consumer_info.expires_at|default_if_none:""|date:"c" }}">{% spaceless %}
                 {% blocktrans with provider_name=instance.provider.name trimmed %}
                     Pair by {{ provider_name }}
                 {% endblocktrans %}
             {% endspaceless %}</a>
         {% else %}
             <a href="{% url 'djangocms_oidc_signup' instance.consumer_type instance.pk %}" class="djangocms-oidc-signup {{ instance.provider.slug }}"
-                data-consumer_type="{{ registratin_consumer_info.consumer_type }}"
-                data-client_id="{{ registratin_consumer_info.client_id|default_if_none:"" }}"
-                data-expires_at="{{ registratin_consumer_info.expires_at|default_if_none:""|date:"c" }}">{% spaceless %}
+                data-consumer_type="{{ registration_consumer_info.consumer_type }}"
+                data-client_id="{{ registration_consumer_info.client_id|default_if_none:"" }}"
+                data-expires_at="{{ registration_consumer_info.expires_at|default_if_none:""|date:"c" }}">{% spaceless %}
                 {% blocktrans with provider_name=instance.provider.name trimmed %}
                     Login by {{ provider_name }}
                 {% endblocktrans %}

@@ -8,8 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.translation import ugettext_lazy as _
-from mozilla_django_oidc.auth import (LOGGER, OIDCAuthenticationBackend,
-                                      SuspiciousOperation)
+from mozilla_django_oidc.auth import LOGGER, OIDCAuthenticationBackend, SuspiciousOperation
 from mozilla_django_oidc.utils import absolutify
 from requests.auth import HTTPBasicAuth
 
@@ -250,7 +249,8 @@ class DjangocmsOIDCAuthenticationBackend(OIDCAuthenticationBackend):
                 messages.info(request, msg)
                 return None
             user = self.create_user(user_info)
-            OIDCIdentifier.objects.get_or_create(user=user, provider=consumer.provider, uident=openid2_id)
+            if openid2_id:
+                OIDCIdentifier.objects.get_or_create(user=user, provider=consumer.provider, uident=openid2_id)
             msg = _("A new account has been created with the username {} and email {}.").format(
                 user.username, user.email)
             messages.success(request, msg)

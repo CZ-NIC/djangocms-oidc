@@ -12,7 +12,7 @@ from mozilla_django_oidc.utils import absolutify
 
 from .helpers import get_consumer
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger("djangocms_oidc")
 
 
 class OIDCSessionRefresh(SessionRefresh):

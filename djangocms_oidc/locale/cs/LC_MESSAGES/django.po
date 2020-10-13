@@ -146,6 +146,9 @@ msgstr "Odhlášení URL"
 msgid "Name"
 msgstr "Jméno"
 
+msgid "No identifier has been deleted. Check one to delete."
+msgstr "Žádný identifikátor nebyl smazán. Pro smazání některý zaškrtněte."
+
 msgid "No interaction"
 msgstr "Jen bez dotazování"
 
@@ -257,6 +260,9 @@ msgstr "Zobrazit obsah jen pokud jsou dané podmínky splněny."
 
 msgid "Show this text when attribute has not been handovered."
 msgstr "Zobrazit tento text v případě, že údaj nebyl předsán."
+
+msgid "Something went wrong. Please, try it again."
+msgstr "Něco se nepovedlo. Prosím, zkuste to znova."
 
 #, python-format
 msgid ""

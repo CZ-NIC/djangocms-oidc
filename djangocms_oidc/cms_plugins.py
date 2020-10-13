@@ -1,15 +1,18 @@
-from django.utils.translation import ugettext_lazy as _
-
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
+from django.utils.translation import ugettext_lazy as _
 
 from .constants import DJNAGOCMS_USER_SESSION_KEY
 from .forms import OIDCDataForm
-from .helpers import (check_required_handovered, get_user_identifiers_formset,
-                      get_verified_as)
-from .models import (OIDCDisplayDedicatedContent, OIDCHandoverData,
-                     OIDCIdentifier, OIDCLogin, OIDCShowAttribute,
-                     get_display_content_settings)
+from .helpers import check_required_handovered, get_user_identifiers_formset, get_verified_as
+from .models import (
+    OIDCDisplayDedicatedContent,
+    OIDCHandoverData,
+    OIDCIdentifier,
+    OIDCLogin,
+    OIDCShowAttribute,
+    get_display_content_settings,
+)
 
 
 class OIDCConsumerBase(CMSPluginBase):
@@ -33,7 +36,7 @@ class OIDCConsumerBase(CMSPluginBase):
             context['djangocms_oidc_user_info'] = user_info
             context['all_required_handovered'] = check_required_handovered(instance, user_info)
             context['djangocms_oidc_verified_as'] = self.get_verified_as(instance, user_info)
-        context['registratin_consumer_info'] = instance.provider.get_registratin_consumer_info()
+        context['registration_consumer_info'] = instance.provider.get_registration_consumer_info()
         return context
 
 
@@ -82,7 +85,7 @@ class OIDCDisplayDedicatedContentPlugin(CMSPluginBase):
         if instance.conditions is None:
             context['content_permitted_to_user'] = user_info is not None
         else:
-            for code, _, fnc in get_display_content_settings():
+            for code, dummy, fnc in get_display_content_settings():
                 if code == instance.conditions:
                     context['content_permitted_to_user'] = fnc(context, instance, placeholder, user_info)
         return context

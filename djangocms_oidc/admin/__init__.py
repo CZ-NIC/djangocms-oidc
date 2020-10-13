@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from ..models import OIDCIdentifier, OIDCProvider, OIDCRegisterConsumer
 from .options import OIDCIdentifierAdmin, OIDCProviderAdmin, OIDCRegisterConsumerAdmin
 

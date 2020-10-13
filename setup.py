@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from distutils.command.build import build
 
 from setuptools import find_packages, setup
@@ -43,6 +44,10 @@ setup(
         'django-countries',
         'django-multiselectfield',
     ),
+    extras_require={
+        'quality': ['isort', 'flake8'],
+        'test': ['requests_mock', 'freezegun'],
+    },
     packages=find_packages(exclude=['tests']),
     cmdclass={"build": CustomBuild},
     setup_requires=["Babel >=2.3"],

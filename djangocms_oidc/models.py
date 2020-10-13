@@ -1,19 +1,18 @@
 import datetime
 import logging
 
+import jsonfield
 import requests
+from cms.models.fields import PageField
+from cms.models.pluginmodel import CMSPlugin
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from requests.exceptions import RequestException
 from multiselectfield import MultiSelectField
-
-import jsonfield
-from cms.models.fields import PageField
-from cms.models.pluginmodel import CMSPlugin
+from requests.exceptions import RequestException
 
 from .utils import DEFAULT_DISPLAY_CONTENT, get_cache_key, get_settings
 
@@ -57,7 +56,7 @@ class OIDCRegisterConsumer(CMSPlugin):
             "client_name": name,
         }
 
-    def make_registeration(self, name, redirect_uris):
+    def make_registration(self, name, redirect_uris):
         response = requests.post(self.register_url, data=self.get_payload(name, redirect_uris))
         response.raise_for_status()
         return response.json()
@@ -133,7 +132,7 @@ class OIDCProvider(CMSPlugin):
         key = self.get_cache_key()
         cache.set(key, self.progress_code, 10)  # Assign the key for 10 seconds.
         try:
-            data = self.register_consumer.make_registeration(self.name, redirect_uris)
+            data = self.register_consumer.make_registration(self.name, redirect_uris)
         except RequestException as msg:
             logger.error(msg)
             return msg
@@ -155,7 +154,7 @@ class OIDCProvider(CMSPlugin):
         logger.debug("Store into cache: {} for {} sec.".format(key, duration))
         return None
 
-    def get_registratin_consumer_info(self):
+    def get_registration_consumer_info(self):
         data = {
             'client_id': None,
             'expires_at': None,
@@ -177,6 +176,8 @@ def validate_claims(value):
     if not isinstance(value, dict):
         raise ValidationError(_("The value must be a dictionary type: {}"))
     if "userinfo" in value:
+        if not isinstance(value["userinfo"], dict):
+            raise ValidationError(_('The value "userinfo" must be a dictionary type: {"userinfo": ...}'))
         for key, datadict in value["userinfo"].items():
             if not isinstance(datadict, dict):
                 raise ValidationError(
@@ -248,7 +249,6 @@ class OIDCHandoverData(OIDCHandoverDataBase):
 
 class OIDCLogin(OIDCLoginBase):
     """OIDC Consumer for login user."""
-
 
 
 CONSUMER_CLASS = {

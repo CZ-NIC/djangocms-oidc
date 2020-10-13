@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.forms import modelformset_factory
 from django.utils.encoding import force_text
 
-from .constants import DJNAGOCMS_USER_SESSION_KEY, DJNAGOCMS_PLUGIN_SESSION_KEY
+from .constants import DJNAGOCMS_PLUGIN_SESSION_KEY, DJNAGOCMS_USER_SESSION_KEY
 from .models import CONSUMER_CLASS, OIDCIdentifier
 
 
@@ -25,7 +25,7 @@ def get_consumer(request):
     return None
 
 
-def load_consumer(request, consumer_type, instance_id):
+def load_consumer(consumer_type, instance_id):
     """Load consumer according of type and ID."""
     if consumer_type in CONSUMER_CLASS:
         try:

@@ -14,9 +14,10 @@ DISMISS_VIEW_CLASS_PATH = import_from_settings('DJANGOCMS_OIDC_DISMISS_VIEW_CLAS
 OIDCDismissViewClass = import_string(DISMISS_VIEW_CLASS_PATH)
 
 urlpatterns = [
-    url(r'^sign-up/(?P<consumer_type>({}))-(?P<plugin_id>\d+)(?P<prompt>[\w,]+)?/$'.format('|'.join(CONSUMER_CLASS.keys())),
+    url(r'^oidc-sign-up/(?P<consumer_type>({}))-(?P<plugin_id>\d+)(?P<prompt>[\w,]+)?/$'.format(
+        '|'.join(CONSUMER_CLASS.keys())),
         OIDCCSignupViewClass.as_view(), name='djangocms_oidc_signup'),
-    url(r'dismiss/$', OIDCDismissViewClass.as_view(), name='djangocms_oidc_dismiss'),
-    url(r'logout/$', OIDCLogoutView.as_view(), name='djangocms_oidc_logout'),
-    url(r'delete-identifiers/$', OIDCDeleteIdentifiersView.as_view(), name='djangocms_oidc_delete_identifiers'),
+    url(r'oidc-dismiss/$', OIDCDismissViewClass.as_view(), name='djangocms_oidc_dismiss'),
+    url(r'oidc-logout/$', OIDCLogoutView.as_view(), name='djangocms_oidc_logout'),
+    url(r'oidc-delete-identifiers/$', OIDCDeleteIdentifiersView.as_view(), name='djangocms_oidc_delete_identifiers'),
 ]
