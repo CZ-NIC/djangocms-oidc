@@ -4,18 +4,18 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.forms import modelformset_factory
 from django.utils.encoding import force_text
 
-from .constants import DJNAGOCMS_PLUGIN_SESSION_KEY, DJNAGOCMS_USER_SESSION_KEY
+from .constants import DJANGOCMS_PLUGIN_SESSION_KEY, DJANGOCMS_USER_SESSION_KEY
 from .models import CONSUMER_CLASS, OIDCIdentifier
 
 
 def set_consumer(request, instance):
     """Set consumer into session."""
-    request.session[DJNAGOCMS_PLUGIN_SESSION_KEY] = (instance.consumer_type, instance.pk)
+    request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (instance.consumer_type, instance.pk)
 
 
 def get_consumer(request):
     """Get consumer from session."""
-    plugin_type_and_id = request.session.get(DJNAGOCMS_PLUGIN_SESSION_KEY)
+    plugin_type_and_id = request.session.get(DJANGOCMS_PLUGIN_SESSION_KEY)
     if plugin_type_and_id is not None:
         consumer_type, instance_id = plugin_type_and_id
         try:
@@ -67,9 +67,9 @@ def get_verified_as(verified_by, user_info, default):
 
 def get_user_info(request):
     """Get user info stored in session."""
-    return request.session.get(DJNAGOCMS_USER_SESSION_KEY)
+    return request.session.get(DJANGOCMS_USER_SESSION_KEY)
 
 
 def clear_user_info(request):
     """Delete user info stored in session."""
-    request.session.pop(DJNAGOCMS_USER_SESSION_KEY, None)
+    request.session.pop(DJANGOCMS_USER_SESSION_KEY, None)

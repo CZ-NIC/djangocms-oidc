@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import RequestFactory, TestCase
 
 from djangocms_oidc import helpers
-from djangocms_oidc.constants import DJNAGOCMS_PLUGIN_SESSION_KEY, DJNAGOCMS_USER_SESSION_KEY
+from djangocms_oidc.constants import DJANGOCMS_PLUGIN_SESSION_KEY, DJANGOCMS_USER_SESSION_KEY
 from djangocms_oidc.models import OIDCHandoverData, OIDCIdentifier, OIDCProvider
 
 
@@ -20,7 +20,7 @@ class TestHelpers(TestCase):
         request = RequestFactory().request()
         request.session = {}
         helpers.set_consumer(request, self.plugin)
-        self.assertEqual(request.session, {DJNAGOCMS_PLUGIN_SESSION_KEY: ('handover', self.plugin.pk)})
+        self.assertEqual(request.session, {DJANGOCMS_PLUGIN_SESSION_KEY: ('handover', self.plugin.pk)})
 
     def test_get_consumer_none(self):
         request = RequestFactory().request()
@@ -29,12 +29,12 @@ class TestHelpers(TestCase):
 
     def test_get_consumer_object_does_not_exists(self):
         request = RequestFactory().request()
-        request.session = {DJNAGOCMS_PLUGIN_SESSION_KEY: ('handover', 42)}
+        request.session = {DJANGOCMS_PLUGIN_SESSION_KEY: ('handover', 42)}
         self.assertIsNone(helpers.get_consumer(request))
 
     def test_get_consumer(self):
         request = RequestFactory().request()
-        request.session = {DJNAGOCMS_PLUGIN_SESSION_KEY: ('handover', self.plugin.pk)}
+        request.session = {DJANGOCMS_PLUGIN_SESSION_KEY: ('handover', self.plugin.pk)}
         plugin = helpers.get_consumer(request)
         self.assertEqual(self.plugin, plugin)
 
@@ -116,7 +116,7 @@ class TestHelpers(TestCase):
 
     def test_get_user_info(self):
         request = RequestFactory().request()
-        request.session = {DJNAGOCMS_USER_SESSION_KEY: 'ok'}
+        request.session = {DJANGOCMS_USER_SESSION_KEY: 'ok'}
         self.assertEqual(helpers.get_user_info(request), 'ok')
 
     def test_clear_user_info_is_empty(self):
@@ -127,6 +127,6 @@ class TestHelpers(TestCase):
 
     def test_clear_user_info(self):
         request = RequestFactory().request()
-        request.session = {DJNAGOCMS_USER_SESSION_KEY: 'ok'}
+        request.session = {DJANGOCMS_USER_SESSION_KEY: 'ok'}
         helpers.clear_user_info(request)
         self.assertEqual(request.session, {})

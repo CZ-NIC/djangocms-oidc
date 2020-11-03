@@ -12,7 +12,7 @@ from django.views.generic import View
 from mozilla_django_oidc.utils import absolutify, add_state_and_nonce_to_session, import_from_settings
 from mozilla_django_oidc.views import OIDCAuthenticationCallbackView, OIDCAuthenticationRequestView, get_next_url
 
-from .constants import DJNAGOCMS_PLUGIN_SESSION_KEY, DJNAGOCMS_USER_SESSION_KEY
+from .constants import DJANGOCMS_PLUGIN_SESSION_KEY, DJANGOCMS_USER_SESSION_KEY
 from .helpers import get_consumer, get_user_identifiers_formset, load_consumer, set_consumer
 
 LOGGER = logging.getLogger("djangocms_oidc")
@@ -53,8 +53,8 @@ class OIDCSignupView(View):
                 messages.error(request, error)
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
         set_consumer(request, consumer)
-        if DJNAGOCMS_USER_SESSION_KEY in request.session:
-            del request.session[DJNAGOCMS_USER_SESSION_KEY]
+        if DJANGOCMS_USER_SESSION_KEY in request.session:
+            del request.session[DJANGOCMS_USER_SESSION_KEY]
         query = urlencode(self.get_redirect_params(request, prompt))
         redirect_url = '{url}?{query}'.format(url=reverse("oidc_authentication_init"), query=query)
         return HttpResponseRedirect(redirect_url)
@@ -67,10 +67,10 @@ class OIDCDismissView(View):
 
     def get(self, request):
         """Remove OIDC data."""
-        if DJNAGOCMS_PLUGIN_SESSION_KEY in request.session:
-            del request.session[DJNAGOCMS_PLUGIN_SESSION_KEY]
-        if DJNAGOCMS_USER_SESSION_KEY in request.session:
-            del request.session[DJNAGOCMS_USER_SESSION_KEY]
+        if DJANGOCMS_PLUGIN_SESSION_KEY in request.session:
+            del request.session[DJANGOCMS_PLUGIN_SESSION_KEY]
+        if DJANGOCMS_USER_SESSION_KEY in request.session:
+            del request.session[DJANGOCMS_USER_SESSION_KEY]
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 

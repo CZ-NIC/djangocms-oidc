@@ -116,7 +116,6 @@ Migrage new installed plugins:
 
 .. code-block:: shell
 
-    $ cd mysite
     $ python manage.py migrate
 
 

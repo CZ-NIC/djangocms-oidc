@@ -12,7 +12,7 @@ from django.test import RequestFactory, TestCase, override_settings
 from freezegun import freeze_time
 
 from djangocms_oidc.auth import DjangocmsOIDCAuthenticationBackend
-from djangocms_oidc.constants import DJNAGOCMS_PLUGIN_SESSION_KEY, DJNAGOCMS_USER_SESSION_KEY
+from djangocms_oidc.constants import DJANGOCMS_PLUGIN_SESSION_KEY, DJANGOCMS_USER_SESSION_KEY
 from djangocms_oidc.models import OIDCHandoverData, OIDCIdentifier, OIDCLogin, OIDCProvider
 
 
@@ -61,7 +61,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
     @override_settings(OIDC_USE_NONCE=True)
     @patch('mozilla_django_oidc.auth.OIDCAuthenticationBackend._verify_jws')
     def test_verify_token_failed_nonce(self, jws_mock):
-        self.backend.request.session[DJNAGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
+        self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
         jws_mock.return_value = json.dumps({'nonce': 'foobar'}).encode('utf-8')
         with self.assertRaisesMessage(SuspiciousOperation, 'JWT Nonce verification failed.'):
             self.backend.verify_token('my_token', **{'nonce': 'foo'})
@@ -70,7 +70,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
     @override_settings(OIDC_USE_NONCE=True)
     @patch('mozilla_django_oidc.auth.OIDCAuthenticationBackend._verify_jws')
     def test_verify_token(self, jws_mock):
-        self.backend.request.session[DJNAGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
+        self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
         jws_mock.return_value = json.dumps({'nonce': 'foobar'}).encode('utf-8')
         payload = self.backend.verify_token('my_token', **{'nonce': 'foobar'})
         jws_mock.assert_called_with(b'my_token', 'client_secret')
@@ -87,7 +87,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
     @requests_mock.Mocker()
     def test_get_token(self, mock_req):
         mock_req.post("https://foo.foo/token", json={'status': 'OK'})
-        self.backend.request.session[DJNAGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
+        self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
         response = self.backend.get_token({})
         self.assertEqual(response, {'status': 'OK'})
 
@@ -103,7 +103,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
     @requests_mock.Mocker()
     def test_get_userinfo(self, mock_req):
         mock_req.get("https://foo.foo/user", json={'status': 'OK'})
-        self.backend.request.session[DJNAGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
+        self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
         response = self.backend.get_userinfo('access_token', 'id_token', {})
         self.assertEqual(response, {'status': 'OK'})
 
@@ -118,11 +118,11 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         mock_req.get("https://foo.foo/user", json={'email': 'user@foo.foo'})
         request = RequestFactory().get("/?state=ok&code=42")
         request.session = {
-            DJNAGOCMS_PLUGIN_SESSION_KEY: (self.plugin.consumer_type, self.plugin.pk)
+            DJANGOCMS_PLUGIN_SESSION_KEY: (self.plugin.consumer_type, self.plugin.pk)
         }
         self.backend.request = request
         self.assertIsNone(self.backend.authenticate(request, nonce='foobar'))
-        self.assertEqual(request.session[DJNAGOCMS_USER_SESSION_KEY]['email'], 'user@foo.foo')
+        self.assertEqual(request.session[DJANGOCMS_USER_SESSION_KEY]['email'], 'user@foo.foo')
 
     def test_authenticate_no_code(self):
         request = RequestFactory().get("/?state=ok")
@@ -136,7 +136,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         mock_verify_token.return_value = None
         request = RequestFactory().get("/?state=ok&code=42")
         request.session = {
-            DJNAGOCMS_PLUGIN_SESSION_KEY: (self.plugin.consumer_type, self.plugin.pk)
+            DJANGOCMS_PLUGIN_SESSION_KEY: (self.plugin.consumer_type, self.plugin.pk)
         }
         self.backend.request = request
         self.assertIsNone(self.backend.authenticate(request, nonce='foobar'))
@@ -150,7 +150,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         mock_verify_token.return_value = {'status': 'foo'}
         request = RequestFactory().get("/?state=ok&code=42")
         request.session = {
-            DJNAGOCMS_PLUGIN_SESSION_KEY: (self.plugin.consumer_type, self.plugin.pk)
+            DJANGOCMS_PLUGIN_SESSION_KEY: (self.plugin.consumer_type, self.plugin.pk)
         }
         self.backend.request = request
         self.assertIsNone(self.backend.authenticate(request, nonce='foobar'))
@@ -187,7 +187,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
     def test_get_or_create_user_no_claims_verified(self, mock_req, mock_verify_claims):
         mock_req.get("https://foo.foo/user", json={'status': 'OK'})
         mock_verify_claims.return_value = False
-        self.backend.request.session[DJNAGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
+        self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
         with self.assertRaisesMessage(SuspiciousOperation, "Claims verification failed"):
             self.backend.get_or_create_user(self.backend.request, 'access_token', 'id_token', {'status': 'foo'})
         mock_verify_claims.assert_called_with({'status': 'OK'})
@@ -219,7 +219,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
             'userinfo': {'email': {'essential': True}},
         }
         plugin = OIDCHandoverData.objects.create(provider=self.provider, insist_on_required_claims=True, claims=claims)
-        self.backend.request.session[DJNAGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
+        self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
         self.backend.request._messages = FallbackStorage(self.backend.request)
         response = self.backend.get_or_create_user(self.backend.request, 'access_token', 'id_token', {'status': 'foo'})
         self.assertIsNone(response)
@@ -236,7 +236,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         mock_req.get("https://foo.foo/user", json={'email': 'foo@foo.foo'})
         mock_verify_claims.return_value = True
         plugin = OIDCLogin.objects.create(provider=self.provider, insist_on_required_claims=True)
-        self.backend.request.session[DJNAGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
+        self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
         self.backend.request._messages = FallbackStorage(self.backend.request)
         self.backend.request.user = AnonymousUser()
         user = get_user_model().objects.create(username="user", email='foo@foo.foo')
@@ -253,7 +253,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         mock_req.get("https://foo.foo/user", json={'email': 'foo@foo.foo'})
         mock_verify_claims.return_value = True
         plugin = OIDCLogin.objects.create(provider=self.provider, insist_on_required_claims=True)
-        self.backend.request.session[DJNAGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
+        self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
         self.backend.request._messages = FallbackStorage(self.backend.request)
         user = get_user_model().objects.create(username="user", email='foo@foo.foo')
         self.backend.request.user = user
@@ -270,7 +270,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         mock_req.get("https://foo.foo/user", json={'email': 'foo@foo.foo', 'openid2_id': 'oid'})
         mock_verify_claims.return_value = True
         plugin = OIDCLogin.objects.create(provider=self.provider, insist_on_required_claims=True)
-        self.backend.request.session[DJNAGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
+        self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
         self.backend.request._messages = FallbackStorage(self.backend.request)
         user = get_user_model().objects.create(username="user", email='foo@foo.foo')
         self.backend.request.user = user
@@ -290,7 +290,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         mock_req.get("https://foo.foo/user", json={'email': 'foo@foo.foo', 'openid2_id': 'oid'})
         mock_verify_claims.return_value = True
         plugin = OIDCLogin.objects.create(provider=self.provider, insist_on_required_claims=True)
-        self.backend.request.session[DJNAGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
+        self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
         self.backend.request._messages = FallbackStorage(self.backend.request)
         user = get_user_model().objects.create(username="user", email='foo@foo.foo')
         self.backend.request.user = user

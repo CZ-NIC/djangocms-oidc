@@ -2,7 +2,7 @@ from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
 from django.utils.translation import ugettext_lazy as _
 
-from .constants import DJNAGOCMS_USER_SESSION_KEY
+from .constants import DJANGOCMS_USER_SESSION_KEY
 from .forms import OIDCDataForm
 from .helpers import check_required_handovered, get_user_identifiers_formset, get_verified_as
 from .models import (
@@ -31,7 +31,7 @@ class OIDCConsumerBase(CMSPluginBase):
 
     def render(self, context, instance, placeholder):
         context = super().render(context, instance, placeholder)
-        user_info = context['request'].session.get(DJNAGOCMS_USER_SESSION_KEY)
+        user_info = context['request'].session.get(DJANGOCMS_USER_SESSION_KEY)
         if user_info is not None:
             context['djangocms_oidc_user_info'] = user_info
             context['all_required_handovered'] = check_required_handovered(instance, user_info)
@@ -81,7 +81,7 @@ class OIDCDisplayDedicatedContentPlugin(CMSPluginBase):
 
     def render(self, context, instance, placeholder):
         context = super().render(context, instance, placeholder)
-        user_info = context['request'].session.get(DJNAGOCMS_USER_SESSION_KEY)
+        user_info = context['request'].session.get(DJANGOCMS_USER_SESSION_KEY)
         if instance.conditions is None:
             context['content_permitted_to_user'] = user_info is not None
         else:
@@ -101,7 +101,7 @@ class OIDCShowAttributePlugin(CMSPluginBase):
 
     def render(self, context, instance, placeholder):
         context = super().render(context, instance, placeholder)
-        user_info = context['request'].session.get(DJNAGOCMS_USER_SESSION_KEY)
+        user_info = context['request'].session.get(DJANGOCMS_USER_SESSION_KEY)
         if user_info is not None:
             context['djangocms_oidc_verified_as'] = get_verified_as(
                 instance.verified_by, user_info, instance.default_value)

@@ -18,7 +18,7 @@ from django.test import Client, RequestFactory, TestCase, override_settings
 from django.test.client import ClientHandler
 from freezegun import freeze_time
 
-from djangocms_oidc.constants import DJNAGOCMS_PLUGIN_SESSION_KEY
+from djangocms_oidc.constants import DJANGOCMS_PLUGIN_SESSION_KEY
 from djangocms_oidc.middleware import OIDCSessionRefresh
 from djangocms_oidc.models import OIDCHandoverData, OIDCProvider
 
@@ -70,7 +70,7 @@ class OIDCSessionRefreshTokenMiddlewareTestCase(TestCase):
             '/foo',
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
-        request.session = {DJNAGOCMS_PLUGIN_SESSION_KEY: (self.plugin.consumer_type, self.plugin.pk)}
+        request.session = {DJANGOCMS_PLUGIN_SESSION_KEY: (self.plugin.consumer_type, self.plugin.pk)}
         request.user = self.user
 
         response = self.middleware.process_request(request)
@@ -104,7 +104,7 @@ class OIDCSessionRefreshTokenMiddlewareTestCase(TestCase):
         )
         cms_page = create_page('test', 'test_content_plugin.html', 'en', slug="test")
         plugin = OIDCHandoverData.objects.create(provider=self.provider, redirect_page=cms_page)
-        request.session = {DJNAGOCMS_PLUGIN_SESSION_KEY: (plugin.consumer_type, plugin.pk)}
+        request.session = {DJANGOCMS_PLUGIN_SESSION_KEY: (plugin.consumer_type, plugin.pk)}
         request.user = self.user
 
         response = self.middleware.process_request(request)
@@ -133,7 +133,7 @@ class OIDCSessionRefreshTokenMiddlewareTestCase(TestCase):
 
         request = self.factory.get('/foo')
         request.user = self.user
-        request.session = {DJNAGOCMS_PLUGIN_SESSION_KEY: (self.plugin.consumer_type, self.plugin.pk)}
+        request.session = {DJANGOCMS_PLUGIN_SESSION_KEY: (self.plugin.consumer_type, self.plugin.pk)}
 
         response = self.middleware.process_request(request)
 
@@ -160,7 +160,7 @@ class OIDCSessionRefreshTokenMiddlewareTestCase(TestCase):
         request.user = self.user
         request.session = {
             'oidc_id_token_expiration': time.time() - 10,
-            DJNAGOCMS_PLUGIN_SESSION_KEY: (self.plugin.consumer_type, self.plugin.pk),
+            DJANGOCMS_PLUGIN_SESSION_KEY: (self.plugin.consumer_type, self.plugin.pk),
         }
 
         response = self.middleware.process_request(request)
@@ -248,7 +248,7 @@ class ClientWithUser(Client):
             # Client lets you fail authentication without providing any helpful
             # messages; we throw an exception because silent failure is
             # unhelpful
-            raise Exception('Unable to authenticate with %r' % credentials)
+            raise Exception('Unable to authenticate with %r' % sorted(credentials.items()))
 
         ret = super(ClientWithUser, self).login(**credentials)
         if not ret:
@@ -333,7 +333,7 @@ class MiddlewareTestCase(TestCase):
     def test_anonymous_user_not_found(self, mock_authenticate):
         mock_authenticate.return_value = None
         client = ClientWithUser()
-        message = "Unable to authenticate with {'username': 'example_username', 'password': 'password'}"
+        message = "Unable to authenticate with [('password', 'password'), ('username', 'example_username')]"
         with self.assertRaisesMessage(Exception, message):
             client.login(username=self.user.username, password='password')
         mock_authenticate.assert_called_with(username='example_username', password='password')
@@ -371,7 +371,7 @@ class MiddlewareTestCase(TestCase):
         session = client.session
         session['oidc_id_token_expiration'] = time.time() - 100
         session['_auth_user_backend'] = 'mozilla_django_oidc.auth.OIDCAuthenticationBackend'
-        session[DJNAGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
+        session[DJANGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
         session.save()
 
         resp = client.get('/mdo_fake_view/')
@@ -419,7 +419,7 @@ class MiddlewareTestCase(TestCase):
         session = client.session
         session['oidc_id_token_expiration'] = time.time() - 100
         session['_auth_user_backend'] = 'mozilla_django_oidc.auth.OIDCAuthenticationBackend'
-        session[DJNAGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
+        session[DJANGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
         session.save()
 
         # Confirm that now you're forced to authenticate again.

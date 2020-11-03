@@ -12,7 +12,7 @@ from mozilla_django_oidc.auth import LOGGER, OIDCAuthenticationBackend, Suspicio
 from mozilla_django_oidc.utils import absolutify
 from requests.auth import HTTPBasicAuth
 
-from .constants import DJNAGOCMS_USER_SESSION_KEY
+from .constants import DJANGOCMS_USER_SESSION_KEY
 from .helpers import check_required_handovered, get_consumer
 from .models import OIDCIdentifier
 
@@ -173,7 +173,7 @@ class DjangocmsOIDCAuthenticationBackend(OIDCAuthenticationBackend):
     def set_user_info_into_session(self, request, user_info):
         """Set user_info into session."""
         user_info['user_info_created_at'] = timezone.now().timestamp()
-        self.request.session[DJNAGOCMS_USER_SESSION_KEY] = user_info
+        self.request.session[DJANGOCMS_USER_SESSION_KEY] = user_info
 
     def get_or_create_user(self, request, access_token, id_token, payload):
         """Returns a User instance if 1 user is found. Creates a user if not found

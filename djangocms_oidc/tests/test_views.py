@@ -16,7 +16,7 @@ from django.test import RequestFactory, override_settings
 from django.urls import reverse
 from freezegun import freeze_time
 
-from djangocms_oidc.constants import DJNAGOCMS_PLUGIN_SESSION_KEY, DJNAGOCMS_USER_SESSION_KEY
+from djangocms_oidc.constants import DJANGOCMS_PLUGIN_SESSION_KEY, DJANGOCMS_USER_SESSION_KEY
 from djangocms_oidc.models import OIDCHandoverData, OIDCIdentifier, OIDCLogin, OIDCProvider, OIDCRegisterConsumer
 from djangocms_oidc.views import DjangocmsOIDCAuthenticationCallbackView, DjangocmsOIDCAuthenticationRequestView
 
@@ -106,10 +106,10 @@ class TestOIDCSignupView(CollectMessagesMixin, CMSTestCase):
         url = reverse('djangocms_oidc_signup', kwargs={
             'consumer_type': self.consumer.consumer_type, 'plugin_id': self.consumer.pk})
         session = self.client.session
-        session[DJNAGOCMS_USER_SESSION_KEY] = 42
+        session[DJANGOCMS_USER_SESSION_KEY] = 42
         session.save()
         response = self.client.get(url)
-        self.assertIsNone(self.client.session.get(DJNAGOCMS_USER_SESSION_KEY))
+        self.assertIsNone(self.client.session.get(DJANGOCMS_USER_SESSION_KEY))
         self.assertRedirects(response, "{}?next=/".format(reverse("oidc_authentication_init")), target_status_code=302)
         self.assertEqual(self._get_messages(response.wsgi_request), [])
         data = cache.cache.get('prefix:djangocms_oidc_provider:{}'.format(self.provider.pk))
@@ -126,20 +126,20 @@ class TestOIDCDismissView(CMSTestCase):
     def test_dismiss_plugin_key(self):
         url = reverse('djangocms_oidc_dismiss')
         session = self.client.session
-        session[DJNAGOCMS_PLUGIN_SESSION_KEY] = 42
+        session[DJANGOCMS_PLUGIN_SESSION_KEY] = 42
         session.save()
         response = self.client.get(url)
         self.assertRedirects(response, '/')
-        self.assertIsNone(self.client.session.get(DJNAGOCMS_PLUGIN_SESSION_KEY))
+        self.assertIsNone(self.client.session.get(DJANGOCMS_PLUGIN_SESSION_KEY))
 
     def test_dismiss_user_key(self):
         url = reverse('djangocms_oidc_dismiss')
         session = self.client.session
-        session[DJNAGOCMS_USER_SESSION_KEY] = 42
+        session[DJANGOCMS_USER_SESSION_KEY] = 42
         session.save()
         response = self.client.get(url)
         self.assertRedirects(response, '/')
-        self.assertIsNone(self.client.session.get(DJNAGOCMS_USER_SESSION_KEY))
+        self.assertIsNone(self.client.session.get(DJANGOCMS_USER_SESSION_KEY))
 
 
 class TestOIDCLogoutView(CMSTestCase):
@@ -304,7 +304,7 @@ class TestDjangocmsOIDCAuthenticationRequestView(CreateRequestMixin, CollectMess
     def test_consumer(self, mock_views_random):
         mock_views_random.return_value = 'random'
         request = self._create_request()
-        request.session[DJNAGOCMS_PLUGIN_SESSION_KEY] = ('handover', self.consumer.pk)
+        request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = ('handover', self.consumer.pk)
         view = DjangocmsOIDCAuthenticationRequestView.as_view()
         response = view(request)
         self.assertEqual(self._get_messages(request), [])
@@ -332,7 +332,7 @@ class TestDjangocmsOIDCAuthenticationRequestView(CreateRequestMixin, CollectMess
         self.consumer.redirect_page = cms_page
         self.consumer.save()
         request = self._create_request()
-        request.session[DJNAGOCMS_PLUGIN_SESSION_KEY] = ('handover', self.consumer.pk)
+        request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = ('handover', self.consumer.pk)
         view = DjangocmsOIDCAuthenticationRequestView.as_view()
         response = view(request)
         self.assertEqual(self._get_messages(request), [])
@@ -424,7 +424,7 @@ class TestDjangocmsOIDCAuthenticationCallbackView(CreateRequestMixin, CollectMes
     def test_failure_url_message(self):
         callback = DjangocmsOIDCAuthenticationCallbackView()
         callback.request = self._create_request()
-        callback.request.session[DJNAGOCMS_PLUGIN_SESSION_KEY] = ('login', self.consumer.pk)
+        callback.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = ('login', self.consumer.pk)
         self.assertEqual(callback.failure_url, '/')
         self.assertEqual(self._get_messages(callback.request), [(messages.INFO, 'Login failed.')])
 

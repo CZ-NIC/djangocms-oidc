@@ -19,7 +19,7 @@ from djangocms_oidc.cms_plugins import (
     OIDCShowAttributeCountryPlugin,
     OIDCShowAttributePlugin,
 )
-from djangocms_oidc.constants import DJNAGOCMS_USER_SESSION_KEY
+from djangocms_oidc.constants import DJANGOCMS_USER_SESSION_KEY
 from djangocms_oidc.models import (
     OIDCDisplayDedicatedContent,
     OIDCHandoverData,
@@ -86,7 +86,7 @@ class TestOIDCHandoverDataPlugin(CreateProviderTestCase):
         model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider, verified_by="name")
         plugin_instance = model_instance.get_plugin_class_instance()
         request = self._create_request()
-        request.session[DJNAGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
+        request.session[DJANGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
         context = plugin_instance.render({'request': request}, model_instance, None)
         self.assertIsInstance(context['instance'], OIDCHandoverData)
         self.assertEqual(context['registration_consumer_info'], {
@@ -113,7 +113,7 @@ class TestOIDCHandoverDataPlugin(CreateProviderTestCase):
     def test_plugin_html_with_user_info(self):
         model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider, verified_by="name")
         request = self._create_request()
-        request.session[DJNAGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
+        request.session[DJANGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request})
         self.assertHTMLEqual(html, """
@@ -135,7 +135,7 @@ class TestOIDCHandoverDataPlugin(CreateProviderTestCase):
         model_instance.provider.account_url = "https://provider.foo/account"
         model_instance.provider.logout_url = "https://provider.foo/logout"
         request = self._create_request()
-        request.session[DJNAGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
+        request.session[DJANGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request})
         self.assertHTMLEqual(html, """
@@ -168,7 +168,7 @@ class TestOIDCHandoverDataPlugin(CreateProviderTestCase):
         model_instance = self._create_model(
             OIDCHandoverDataPlugin, provider=self.provider, verified_by="name", claims=claims)
         request = self._create_request()
-        request.session[DJNAGOCMS_USER_SESSION_KEY] = {'name': 'Tester'}
+        request.session[DJANGOCMS_USER_SESSION_KEY] = {'name': 'Tester'}
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request})
         self.assertHTMLEqual(html, """
@@ -242,7 +242,7 @@ class TestOIDCLoginPluginPlugin(CreateProviderTestCase):
     def test_plugin_html_with_user_info(self):
         model_instance = self._create_model(OIDCLoginPlugin, provider=self.provider, verified_by="name")
         request = self._create_request()
-        request.session[DJNAGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
+        request.session[DJANGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request})
         self.assertHTMLEqual(html, """
@@ -270,7 +270,7 @@ class TestOIDCLoginPluginPlugin(CreateProviderTestCase):
         model_instance.provider.account_url = "https://provider.foo/account"
         model_instance.provider.logout_url = "https://provider.foo/logout"
         request = self._create_request()
-        request.session[DJNAGOCMS_USER_SESSION_KEY] = {'name': 'Tester'}
+        request.session[DJANGOCMS_USER_SESSION_KEY] = {'name': 'Tester'}
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request})
         self.assertHTMLEqual(html, """
@@ -309,7 +309,7 @@ class TestOIDCLoginPluginPlugin(CreateProviderTestCase):
         model_instance.provider.account_url = "https://provider.foo/account"
         model_instance.provider.logout_url = "https://provider.foo/logout"
         request = self._create_request()
-        request.session[DJNAGOCMS_USER_SESSION_KEY] = {'name': 'Tester'}
+        request.session[DJANGOCMS_USER_SESSION_KEY] = {'name': 'Tester'}
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request})
         self.assertHTMLEqual(html, """
@@ -425,7 +425,7 @@ class TestOIDCDisplayDedicatedContentPlugin(CreateInstancesMixin, TestCase):
         model_instance = self._create_model(OIDCDisplayDedicatedContentPlugin, conditions='email_verified')
         self._create_plugin_content(model_instance)
         request = self._create_request()
-        request.session[DJNAGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'email_verified': True}
+        request.session[DJANGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'email_verified': True}
         request.current_page = None
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request})
@@ -446,7 +446,7 @@ class TestOIDCDisplayDedicatedContentPlugin(CreateInstancesMixin, TestCase):
         self._create_plugin_content(model_instance)
         self._create_plugin_content(model_instance)
         request = self._create_request()
-        request.session[DJNAGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo'}
+        request.session[DJANGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo'}
         request.current_page = None
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request})
@@ -549,7 +549,7 @@ class TestOIDCShowAttributePlugin(CreateInstancesMixin, TestCase):
         model_instance = self._create_model(OIDCShowAttributePlugin, default_value="Default", verified_by="email")
         plugin_instance = model_instance.get_plugin_class_instance()
         request = self._create_request()
-        request.session[DJNAGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
+        request.session[DJANGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
         context = plugin_instance.render({'request': request}, model_instance, None)
         self.assertIsInstance(context['instance'], OIDCShowAttribute)
         self.assertEqual(context['djangocms_oidc_verified_as'], 'mail@foo.foo')
@@ -571,7 +571,7 @@ class TestOIDCShowAttributePlugin(CreateInstancesMixin, TestCase):
     def test_plugin_html_from_session(self):
         model_instance = self._create_model(OIDCShowAttributePlugin, default_value="Default", verified_by="email")
         request = self._create_request()
-        request.session[DJNAGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
+        request.session[DJANGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request})
         self.assertHTMLEqual(html, "<span>mail@foo.foo</span>")
@@ -591,7 +591,7 @@ class TestOIDCShowAttributeCountryPlugin(CreateInstancesMixin, TestCase):
         model_instance = self._create_model(OIDCShowAttributeCountryPlugin, verified_by="country")
         plugin_instance = model_instance.get_plugin_class_instance()
         request = self._create_request()
-        request.session[DJNAGOCMS_USER_SESSION_KEY] = {'country': 'CZ', 'name': 'Tester'}
+        request.session[DJANGOCMS_USER_SESSION_KEY] = {'country': 'CZ', 'name': 'Tester'}
         context = plugin_instance.render({'request': request}, model_instance, None)
         self.assertIsInstance(context['instance'], OIDCShowAttribute)
         self.assertEqual(context['djangocms_oidc_verified_as'], 'CZ')
@@ -606,7 +606,7 @@ class TestOIDCShowAttributeCountryPlugin(CreateInstancesMixin, TestCase):
     def test_plugin_html_from_session(self):
         model_instance = self._create_model(OIDCShowAttributeCountryPlugin, verified_by="country")
         request = self._create_request()
-        request.session[DJNAGOCMS_USER_SESSION_KEY] = {'country': 'CZ', 'name': 'Tester'}
+        request.session[DJANGOCMS_USER_SESSION_KEY] = {'country': 'CZ', 'name': 'Tester'}
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request})
         self.assertHTMLEqual(html, "<span>Czechia</span>")
