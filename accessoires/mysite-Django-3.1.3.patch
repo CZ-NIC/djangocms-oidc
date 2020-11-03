@@ -1,22 +1,23 @@
 --- mysite/mysite/settings.py
 +++ mysite/mysite/settings.py
-@@ -123,6 +123,15 @@
-     },
- ]
+@@ -32,9 +32,14 @@
  
+ 
+ # Application definition
 +AUTHENTICATION_BACKENDS = [
 +    'django.contrib.auth.backends.ModelBackend',
 +    'djangocms_oidc.auth.DjangocmsOIDCAuthenticationBackend',
 +]
-+
+ 
+-
+-
 +# OIDC classes
 +OIDC_AUTHENTICATE_CLASS = "djangocms_oidc.views.DjangocmsOIDCAuthenticationRequestView"
 +OIDC_CALLBACK_CLASS = "djangocms_oidc.views.DjangocmsOIDCAuthenticationCallbackView"
-+
  
- MIDDLEWARE = [
-     'cms.middleware.utils.ApphookReloadMiddleware',
-@@ -136,7 +145,8 @@
+ 
+ ROOT_URLCONF = 'mysite.urls'
+@@ -136,7 +141,8 @@
      'cms.middleware.user.CurrentUserMiddleware',
      'cms.middleware.page.CurrentPageMiddleware',
      'cms.middleware.toolbar.ToolbarMiddleware',
@@ -26,7 +27,7 @@
  ]
  
  INSTALLED_APPS = [
-@@ -179,6 +189,10 @@
+@@ -179,6 +185,10 @@
      'djangocms_snippet',
      'djangocms_googlemap',
      'djangocms_video',
