@@ -106,16 +106,17 @@ Create CMS testing site and go to the main project folder:
 
     $ djangocms mysite
 
-Modify settings and urls with the `mysite.patch <accessories/mysite.patch>`_:
+Modify settings and urls with the `mysite-django-3.1.3.patch <accessoires/mysite-django-3.1.3.patch>`_:
 
 .. code-block:: shell
 
-    $ patch -p0 < mysite.patch
+    $ patch -p0 < accessoires/mysite-django-3.1.3.patch
 
 Migrage new installed plugins:
 
 .. code-block:: shell
 
+    $ cd mysite
     $ python manage.py migrate
 
 
