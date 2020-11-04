@@ -13,7 +13,7 @@ setup(
     author='Zdeněk Böhm',
     author_email='zdenek.bohm@nic.cz',
     name='djangocms-oidc',
-    version='1.0.1',
+    version='2.0.0',
     description='Plugin OIDC (OpenID Connect) into Django CMS.',
     url='https://github.com/CZ-NIC/djangocms-oidc',
     license='GPL GNU License',
