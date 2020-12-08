@@ -41,8 +41,8 @@ setup(
         'django-cms==3.7.4',
         'mozilla-django-oidc==1.2.4',
         'django-jsonfield',
-        'django-countries',
-        'django-multiselectfield',
+        'django-countries==6.1.3',  # 7.x is not compatible with python 3.5.
+        'django-multiselectfield==0.1.12',
     ),
     extras_require={
         'quality': ['isort', 'flake8'],
