@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-09 10:15+0200\n"
+"POT-Creation-Date: 2021-03-26 10:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Zdeněk Böhm <zdenek.bohm@nic.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,6 +26,12 @@ msgstr "Účet URL"
 
 msgid "Authorization endpoint"
 msgstr "Koncový bod autorizace"
+
+msgid "Button label"
+msgstr "Text tlačítka"
+
+msgid "Button text for unlogged in user."
+msgstr "Text tlačítka pro nepřihlášeného uživatele."
 
 msgid "CMS Page"
 msgstr "CMS Stránka"
@@ -261,9 +267,6 @@ msgstr "Zobrazit obsah jen pokud jsou dané podmínky splněny."
 msgid "Show this text when attribute has not been handovered."
 msgstr "Zobrazit tento text v případě, že údaj nebyl předsán."
 
-msgid "Something went wrong. Please, try it again."
-msgstr "Něco se nepovedlo. Prosím, zkuste to znova."
-
 #, python-format
 msgid ""
 "The \"%(key)s\" must be a dictionary type: \"%(key)s\": {\"essential\": "
@@ -289,6 +292,9 @@ msgid ""
 msgstr ""
 "Prochází se seznam názvů atributů podle zadaného pořadí, dokud není nalezena "
 "hodnota. U názvů složených symbolem plus se údaje složí do jedné hodnoty."
+
+msgid "The value \"userinfo\" must be a dictionary type: {\"userinfo\": ...}"
+msgstr "Hodnota \"userinfo\" musí být typu slovnik: {\"userinfo\": ...}"
 
 msgid "The value is required if \"Register consumer\" is not set."
 msgstr "Hodnota je povinná, pokud není nastaveno \"Registrovat odběratele\"."

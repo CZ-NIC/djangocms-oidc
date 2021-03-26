@@ -3,7 +3,7 @@
 
 {% block content %}
     <p>
-        {% if plugin.can_login %}
+        {% if adminform.form.instance.can_login %}
             {% blocktrans trimmed %}
                 This plugin is used to log in a user through authentication with an identity provider.
                 If you only want to handover data from the identity provider, but not log in the user, use the "OIDC Handover data".

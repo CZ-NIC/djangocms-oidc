@@ -225,10 +225,18 @@ class TestValidateClaims(SimpleTestCase):
 
 class TestOIDCHandoverData(SimpleTestCase):
 
-    def test(self):
+    def test_provider(self):
         provider = OIDCProvider(name="Provider")
         consumer = OIDCHandoverData(provider=provider)
         self.assertEqual(str(consumer), "Provider")
+
+    def test_no_provider(self):
+        consumer = OIDCHandoverData()
+        self.assertEqual(str(consumer), "[No provider yet]")
+
+    def test_button(self):
+        consumer = OIDCHandoverData(button_label="Foo")
+        self.assertEqual(str(consumer), "Foo")
 
 
 class TestOIDCShowAttribute(SimpleTestCase):

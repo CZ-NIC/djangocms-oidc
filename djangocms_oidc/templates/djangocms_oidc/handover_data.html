@@ -43,9 +43,13 @@
             data-consumer_type="{{ registration_consumer_info.consumer_type }}"
             data-client_id="{{ registration_consumer_info.client_id|default_if_none:"" }}"
             data-expires_at="{{ registration_consumer_info.expires_at|default_if_none:""|date:"c" }}">{% spaceless %}
-            {% blocktrans with provider_name=instance.provider.name trimmed %}
-                Data handover from {{ provider_name }}
-            {% endblocktrans %}
+            {% if instance.button_label %}
+                {{ instance.button_label }}
+            {% else %}
+                {% blocktrans with provider_name=instance.provider.name trimmed %}
+                    Data handover from {{ provider_name }}
+                {% endblocktrans %}
+            {% endif %}
         {% endspaceless %}</a>
     {% endif %}
 </span>

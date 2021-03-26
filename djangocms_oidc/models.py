@@ -206,6 +206,9 @@ class OIDCHandoverDataBase(CMSPlugin):
     )
 
     provider = models.ForeignKey(OIDCProvider, on_delete=models.CASCADE)
+    button_label = models.CharField(
+        verbose_name=_('Button label'), max_length=80, null=True, blank=True,
+        help_text=_("Button text for unlogged in user."))
     claims = jsonfield.JSONField(
         verbose_name=_("Claims"), validators=[validate_claims], help_text=_("Claims attributes for data handover."))
     insist_on_required_claims = models.BooleanField(
@@ -224,7 +227,14 @@ class OIDCHandoverDataBase(CMSPlugin):
         abstract = True
 
     def __str__(self):
-        return self.provider.name
+        if self.button_label:
+            name = self.button_label
+        else:
+            try:
+                name = self.provider.name
+            except OIDCProvider.DoesNotExist:
+                name = '[No provider yet]'
+        return name
 
     def can_login(self):
         return self.consumer_type == LOGIN_USER
