@@ -141,6 +141,10 @@ class DjangocmsOIDCAuthenticationBackend(OIDCAuthenticationBackend):
                                         'oidc_authentication_callback')
 
         consumer = get_consumer(request)
+        if consumer is None:
+            messages.error(request, _('OIDC Consumer activation failed during authentication. Please try again.'))
+            return None
+
         token_payload = {
             'client_id': consumer.provider.get_client_id(),  # replace OIDC_RP_CLIENT_ID
             'client_secret': consumer.provider.get_client_secret(),  # replace OIDC_RP_CLIENT_SECRET

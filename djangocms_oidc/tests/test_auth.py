@@ -144,6 +144,21 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
 
     @requests_mock.Mocker()
     @patch("djangocms_oidc.auth.DjangocmsOIDCAuthenticationBackend.verify_token")
+    def test_authenticate_no_plugin(self, mock_req, mock_verify_token):
+        mock_req.post("https://foo.foo/token", json={'id_token': '42', 'access_token': 'ok'})
+        mock_verify_token.return_value = None
+        request = RequestFactory().get("/?state=ok&code=42")
+        request.session = {}
+        self.backend.request = request
+        self.backend.request._messages = FallbackStorage(self.backend.request)
+        self.assertIsNone(self.backend.authenticate(request, nonce='foobar'))
+        mock_verify_token.assert_not_called()
+        self.assertEqual(self._get_messages(self.backend.request), [
+            (messages.ERROR, 'OIDC Consumer activation failed during authentication. Please try again.')
+        ])
+
+    @requests_mock.Mocker()
+    @patch("djangocms_oidc.auth.DjangocmsOIDCAuthenticationBackend.verify_token")
     def test_authenticate_suspicious_operation(self, mock_req, mock_verify_token):
         mock_req.post("https://foo.foo/token", json={'id_token': '42', 'access_token': 'ok'})
         mock_req.get("https://foo.foo/user", exc=SuspiciousOperation)
