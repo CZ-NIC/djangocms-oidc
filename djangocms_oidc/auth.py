@@ -157,7 +157,12 @@ class DjangocmsOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         }
 
         # Get the token
-        token_info = self.get_token(token_payload)
+        try:
+            token_info = self.get_token(token_payload)
+        except requests.exceptions.RequestException as msg:
+            messages.error(request, msg)
+            return None
+
         id_token = token_info.get('id_token')
         access_token = token_info.get('access_token')
 

@@ -10,6 +10,7 @@ from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
 from django.test import RequestFactory, TestCase, override_settings
 from freezegun import freeze_time
+from requests.exceptions import HTTPError
 
 from djangocms_oidc.auth import DjangocmsOIDCAuthenticationBackend
 from djangocms_oidc.constants import DJANGOCMS_PLUGIN_SESSION_KEY, DJANGOCMS_USER_SESSION_KEY
@@ -143,6 +144,20 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         mock_verify_token.assert_called_with('42', nonce='foobar')
 
     @requests_mock.Mocker()
+    def test_authenticate_raise_for_status(self, mock_req):
+        mock_req.post("https://foo.foo/token", exc=HTTPError("401 Client Error"))
+        request = RequestFactory().get("/?state=ok&code=42")
+        request.session = {
+            DJANGOCMS_PLUGIN_SESSION_KEY: (self.plugin.consumer_type, self.plugin.pk)
+        }
+        self.backend.request = request
+        self.backend.request._messages = FallbackStorage(self.backend.request)
+        self.assertIsNone(self.backend.authenticate(request, nonce='foobar'))
+        self.assertEqual(self._get_messages(self.backend.request), [
+            (messages.ERROR, '401 Client Error')
+        ])
+
+    @requests_mock.Mocker()
     @patch("djangocms_oidc.auth.DjangocmsOIDCAuthenticationBackend.verify_token")
     def test_authenticate_no_plugin(self, mock_req, mock_verify_token):
         mock_req.post("https://foo.foo/token", json={'id_token': '42', 'access_token': 'ok'})
@@ -208,7 +223,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         mock_verify_claims.assert_called_with({'status': 'OK'})
 
     def _get_messages(self, request):
-        return [(msg.level, msg.message) for msg in get_messages(request)]
+        return [(msg.level, str(msg.message)) for msg in get_messages(request)]
 
     @requests_mock.Mocker()
     @patch("djangocms_oidc.helpers.get_consumer")
