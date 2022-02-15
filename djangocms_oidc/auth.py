@@ -167,7 +167,11 @@ class DjangocmsOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         access_token = token_info.get('access_token')
 
         # Validate the token
-        payload = self.verify_token(id_token, nonce=nonce)
+        try:
+            payload = self.verify_token(id_token, nonce=nonce)
+        except SuspiciousOperation as msg:
+            messages.error(request, msg)
+            return None
 
         if payload:
             self.store_tokens(access_token, id_token)

@@ -186,6 +186,23 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         self.assertIsNone(self.backend.authenticate(request, nonce='foobar'))
         mock_verify_token.assert_called_with('42', nonce='foobar')
 
+    @requests_mock.Mocker()
+    @patch("mozilla_django_oidc.auth.OIDCAuthenticationBackend.get_payload_data")
+    def test_authenticate_suspicious_operation_verify_token(self, mock_req, mock_get_payload_data):
+        mock_req.post("https://foo.foo/token", json={'id_token': '42', 'access_token': 'ok'})
+        mock_get_payload_data.return_value = b'{"nonce": "unexpected_secret"}'
+        request = RequestFactory().get("/?state=ok&code=42")
+        request.session = {
+            DJANGOCMS_PLUGIN_SESSION_KEY: (self.plugin.consumer_type, self.plugin.pk)
+        }
+        self.backend.request = request
+        self.backend.request._messages = FallbackStorage(self.backend.request)
+        self.assertIsNone(self.backend.authenticate(request, nonce='client_secret'))
+        mock_get_payload_data.assert_called_with(b'42', 'client_secret')
+        self.assertEqual(self._get_messages(self.backend.request), [
+            (messages.ERROR, 'JWT Nonce verification failed.')
+        ])
+
     @override_settings(OIDC_RP_SIGN_ALGO='RS256')
     @override_settings(OIDC_RP_IDP_SIGN_KEY='key')
     @patch("djangocms_oidc.auth.DjangocmsOIDCAuthenticationBackend.get_payload_data")
