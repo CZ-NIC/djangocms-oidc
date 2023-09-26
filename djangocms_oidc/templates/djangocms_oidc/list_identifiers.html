@@ -10,13 +10,13 @@
                         {% for field in form %}
                             {{ field }}
                         {% endfor %}
-                        <span class="user-identity">{{ form.initial.uident }}</span>
+                        <span class="user-identity">{{ form.instance.uident }}</span>
                     </li>
                 {% endfor %}
             </ul>
-            <input type="submit" name="djangocms_oidc_delete_identifier" value="{% trans "Delete selected" %}">
+            <input type="submit" name="djangocms_oidc_delete_identifier" value="{% translate "Delete selected" %}">
         </form>
     {% else %}
-        <p class="djangocms-oidc-no-linked-identifiers">{% trans "You have no identifiers associated with the provider." %}</p>
+        <p class="djangocms-oidc-no-linked-identifiers">{% translate "You have no identifiers associated with the provider." %}</p>
     {% endif %}
 {% endif %}

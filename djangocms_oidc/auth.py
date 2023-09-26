@@ -7,7 +7,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_bytes
-from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 from mozilla_django_oidc.auth import LOGGER, OIDCAuthenticationBackend, SuspiciousOperation
 from mozilla_django_oidc.utils import absolutify
 from requests.auth import HTTPBasicAuth
@@ -101,6 +102,22 @@ class DjangocmsOIDCAuthenticationBackend(OIDCAuthenticationBackend):
             verify=self.get_settings('OIDC_VERIFY_SSL', True),
             timeout=self.get_settings('OIDC_TIMEOUT', None),
             proxies=self.get_settings('OIDC_PROXY', None))
+        # Debug request / response.
+        if consumer.claims.get('debug_response', False):
+            messages.warning(self.request, mark_safe(
+                f"<div>POST: {consumer.provider.token_endpoint}</div>"
+                f"<div>Payload: {payload}</div>"
+                f"<div>Auth: {auth}</div>"
+                f"<div>Verify: {self.get_settings('OIDC_VERIFY_SSL', True)}</div>"
+                f"<div>Timeout: {self.get_settings('OIDC_TIMEOUT', None)}</div>"
+                f"<div>Proxies: {self.get_settings('OIDC_PROXY', None)}</div>"
+            ))
+            messages.info(self.request, f"Status code: {response.status_code}")
+            message_fnc = messages.success if response.status_code == 200 else messages.error
+            message_fnc(self.request, f"Reason: {response.reason}")
+            messages.info(self.request, mark_safe("<br/>\n".join(
+                [f"{key}: {value}" for key, value in response.headers.items()])))
+            message_fnc(self.request, response.content)
         response.raise_for_status()
         return response.json()
 
@@ -114,7 +131,7 @@ class DjangocmsOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         user_response = requests.get(
             consumer.provider.user_endpoint,  # self.OIDC_OP_USER_ENDPOINT,
             headers={
-                'Authorization': 'Bearer {0}'.format(access_token)
+                'Authorization': f'Bearer {access_token}'
             },
             verify=self.get_settings('OIDC_VERIFY_SSL', True),
             timeout=self.get_settings('OIDC_TIMEOUT', None),
@@ -261,13 +278,17 @@ class DjangocmsOIDCAuthenticationBackend(OIDCAuthenticationBackend):
                 msg = _("To pair with your identity provider, log in first.")
                 messages.info(request, msg)
                 return None
-            user = self.create_user(user_info)
-            if openid2_id:
-                OIDCIdentifier.objects.get_or_create(user=user, provider=consumer.provider, uident=openid2_id)
-            msg = _("A new account has been created with the username {} and email {}.").format(
-                user.username, user.email)
-            messages.success(request, msg)
-            return user
+            return self.create_new_user(request, consumer, openid2_id, user_info)
         else:
             LOGGER.debug('Login failed: No user with email %s found.', user_info.get('email'))
             return None
+
+    def create_new_user(self, request, consumer, openid2_id, user_info):
+        """Create new user."""
+        user = self.create_user(user_info)
+        if openid2_id:
+            OIDCIdentifier.objects.get_or_create(user=user, provider=consumer.provider, uident=openid2_id)
+        msg = _("A new account has been created with the username {} and email {}.").format(
+            user.username, user.email)
+        messages.success(request, msg)
+        return user

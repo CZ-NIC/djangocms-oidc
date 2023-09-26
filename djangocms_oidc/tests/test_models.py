@@ -70,7 +70,7 @@ class TestOIDCProvider(TestCase):
 
     def test_get_client_id_from_cache(self):
         provider = OIDCProvider.objects.create(name="Provider", slug="provider")
-        cache.cache.set('prefix:djangocms_oidc_provider:{}'.format(provider.pk), {'client_id': 42})
+        cache.cache.set(f'prefix:djangocms_oidc_provider:{provider.pk}', {'client_id': 42})
         client_id = provider.get_client_id()
         self.assertEqual(client_id, 42)
 
@@ -85,7 +85,7 @@ class TestOIDCProvider(TestCase):
 
     def test_get_client_secret_from_cache(self):
         provider = OIDCProvider.objects.create(name="Provider", slug="provider")
-        cache.cache.set('prefix:djangocms_oidc_provider:{}'.format(provider.pk), {'client_secret': 42})
+        cache.cache.set(f'prefix:djangocms_oidc_provider:{provider.pk}', {'client_secret': 42})
         get_client_secret = provider.get_client_secret()
         self.assertEqual(get_client_secret, 42)
 
@@ -95,7 +95,7 @@ class TestOIDCProvider(TestCase):
 
     def test_needs_register_from_cache(self):
         provider = OIDCProvider.objects.create(name="Provider", slug="provider")
-        cache.cache.set('prefix:djangocms_oidc_provider:{}'.format(provider.pk), {'client_id': 42})
+        cache.cache.set(f'prefix:djangocms_oidc_provider:{provider.pk}', {'client_id': 42})
         self.assertFalse(provider.needs_register())
 
     def test_needs_register_is_true(self):
@@ -104,7 +104,7 @@ class TestOIDCProvider(TestCase):
 
     def test_get_cache_key(self):
         provider = OIDCProvider.objects.create(name="Provider", slug="provider")
-        self.assertEqual(provider.get_cache_key(), 'prefix:djangocms_oidc_provider:{}'.format(provider.pk))
+        self.assertEqual(provider.get_cache_key(), f'prefix:djangocms_oidc_provider:{provider.pk}')
 
     def test_registration_in_progress_not(self):
         provider = OIDCProvider(name="Provider", client_id=42)
@@ -112,7 +112,7 @@ class TestOIDCProvider(TestCase):
 
     def test_registration_in_progress(self):
         provider = OIDCProvider.objects.create(name="Provider", slug="provider")
-        cache.cache.set('prefix:djangocms_oidc_provider:{}'.format(provider.pk), '--PROGRESS--')
+        cache.cache.set(f'prefix:djangocms_oidc_provider:{provider.pk}', '--PROGRESS--')
         self.assertTrue(provider.registration_in_progress())
 
     @requests_mock.Mocker()
@@ -122,9 +122,9 @@ class TestOIDCProvider(TestCase):
             name="Provider", slug="provider", register_consumer=self.register_consumer)
         with freeze_time('2020-10-06 14:55') as frozen_datetime:
             msg = provider.register_consumer_into_cache(['https://foo.foo/1/', 'https://foo.foo/2/'])
-            self.assertEqual(cache.cache.get('prefix:djangocms_oidc_provider:{}'.format(provider.pk)), '--PROGRESS--')
+            self.assertEqual(cache.cache.get(f'prefix:djangocms_oidc_provider:{provider.pk}'), '--PROGRESS--')
             frozen_datetime.tick(delta=datetime.timedelta(seconds=10))
-            self.assertIsNone(cache.cache.get('prefix:djangocms_oidc_provider:{}'.format(provider.pk)))
+            self.assertIsNone(cache.cache.get(f'prefix:djangocms_oidc_provider:{provider.pk}'))
         self.assertEqual(str(msg), '404 Client Error: None for url: https://foo.foo/register')
 
     @requests_mock.Mocker()
@@ -138,7 +138,7 @@ class TestOIDCProvider(TestCase):
             name="Provider", slug="provider", register_consumer=self.register_consumer)
         msg = provider.register_consumer_into_cache(['https://foo.foo/1/', 'https://foo.foo/2/'])
         self.assertIsNone(msg)
-        data = cache.cache.get('prefix:djangocms_oidc_provider:{}'.format(provider.pk))
+        data = cache.cache.get(f'prefix:djangocms_oidc_provider:{provider.pk}')
         self.assertEqual(data, {
             'client_id': '1d9G0Oid4E5V',
             'client_secret': '5ed3a93b14cb5f1fdb97cb3dde1daddade443753eeb84432320b78a2',
@@ -165,7 +165,7 @@ class TestOIDCProvider(TestCase):
             name="Provider", slug="provider", register_consumer=self.register_consumer)
         msg = provider.register_consumer_into_cache(['https://foo.foo/1/', 'https://foo.foo/2/'])
         self.assertIsNone(msg)
-        data = cache.cache.get('prefix:djangocms_oidc_provider:{}'.format(provider.pk))
+        data = cache.cache.get(f'prefix:djangocms_oidc_provider:{provider.pk}')
         self.assertEqual(data, {
             'client_id': '1d9G0Oid4E5V',
             'client_secret': '5ed3a93b14cb5f1fdb97cb3dde1daddade443753eeb84432320b78a2',
@@ -184,7 +184,7 @@ class TestOIDCProvider(TestCase):
 
     def test_get_registration_consumer_info_automatic_from_cache(self):
         provider = OIDCProvider.objects.create(name="Provider", slug="provider")
-        cache.cache.set('prefix:djangocms_oidc_provider:{}'.format(provider.pk), {
+        cache.cache.set(f'prefix:djangocms_oidc_provider:{provider.pk}', {
             'client_id': 42, 'expires_at': 'never'})
         data = provider.get_registration_consumer_info()
         self.assertEqual(data, {'client_id': 42, 'expires_at': 'never', 'consumer_type': 'AUTOMATIC'})

@@ -2,7 +2,7 @@ import re
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import modelformset_factory
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from .constants import DJANGOCMS_PLUGIN_SESSION_KEY, DJANGOCMS_USER_SESSION_KEY
 from .models import CONSUMER_CLASS, OIDCIdentifier
@@ -58,7 +58,7 @@ def get_verified_as(verified_by, user_info, default):
             for key in item.split('+'):
                 value = user_info.get(key)
                 if value:
-                    names.append(force_text(value))
+                    names.append(force_str(value))
             if names:
                 name = " ".join(names)
                 break
@@ -73,3 +73,8 @@ def get_user_info(request):
 def clear_user_info(request):
     """Delete user info stored in session."""
     request.session.pop(DJANGOCMS_USER_SESSION_KEY, None)
+
+
+def request_is_ajax(request):
+    """Check that request is an Ajax type."""
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'

@@ -47,7 +47,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         cls.provider = OIDCProvider.objects.create(
             name="Provider", slug="provider", client_id="example_id", client_secret="client_secret",
             token_endpoint="https://foo.foo/token", user_endpoint="https://foo.foo/user")
-        cls.plugin = OIDCHandoverData.objects.create(provider=cls.provider)
+        cls.plugin = OIDCHandoverData.objects.create(provider=cls.provider, claims={})
 
     @override_settings(OIDC_OP_TOKEN_ENDPOINT='https://server.example.com/token')
     @override_settings(OIDC_OP_USER_ENDPOINT='https://server.example.com/user')
@@ -91,6 +91,30 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (self.plugin.consumer_type, self.plugin.pk)
         response = self.backend.get_token({})
         self.assertEqual(response, {'status': 'OK'})
+
+    @requests_mock.Mocker()
+    def test_get_token_debug_response(self, mock_req):
+        mock_req.post("https://foo.foo/token", json={'status': 'OK'})
+        claims = {
+            'userinfo': {'email': {'essential': True}},
+            'debug_response': True,
+        }
+        plugin = OIDCHandoverData.objects.create(provider=self.provider, claims=claims)
+        self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
+        self.backend.request._messages = FallbackStorage(self.backend.request)
+        response = self.backend.get_token({})
+        self.assertEqual(response, {'status': 'OK'})
+        self.assertEqual(self._get_messages(self.backend.request), [
+            (messages.WARNING,
+                '<div>POST: https://foo.foo/token</div>'
+                '<div>Payload: {}</div>'
+                '<div>Auth: None</div>'
+                '<div>Verify: True</div>'
+                '<div>Timeout: None</div><div>Proxies: None</div>'),
+            (messages.INFO, 'Status code: 200'),
+            (messages.SUCCESS, 'Reason: None'),
+            (messages.SUCCESS, 'b\'{"status": "OK"}\''),
+        ])
 
     @override_settings(OIDC_TOKEN_USE_BASIC_AUTH=True)
     def test_get_token_use_basic_auth(self):
@@ -282,7 +306,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
     def test_get_or_create_user_consumer_can_login(self, mock_req, mock_verify_claims):
         mock_req.get("https://foo.foo/user", json={'email': 'foo@foo.foo'})
         mock_verify_claims.return_value = True
-        plugin = OIDCLogin.objects.create(provider=self.provider, insist_on_required_claims=True)
+        plugin = OIDCLogin.objects.create(provider=self.provider, insist_on_required_claims=True, claims={})
         self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
         self.backend.request._messages = FallbackStorage(self.backend.request)
         self.backend.request.user = AnonymousUser()
@@ -299,7 +323,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
     def test_get_or_create_user_is_authenticated(self, mock_req, mock_verify_claims):
         mock_req.get("https://foo.foo/user", json={'email': 'foo@foo.foo'})
         mock_verify_claims.return_value = True
-        plugin = OIDCLogin.objects.create(provider=self.provider, insist_on_required_claims=True)
+        plugin = OIDCLogin.objects.create(provider=self.provider, insist_on_required_claims=True, claims={})
         self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
         self.backend.request._messages = FallbackStorage(self.backend.request)
         user = get_user_model().objects.create(username="user", email='foo@foo.foo')
@@ -316,7 +340,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
     def test_get_or_create_user_is_authenticated_with_openid2_id(self, mock_req, mock_verify_claims):
         mock_req.get("https://foo.foo/user", json={'email': 'foo@foo.foo', 'openid2_id': 'oid'})
         mock_verify_claims.return_value = True
-        plugin = OIDCLogin.objects.create(provider=self.provider, insist_on_required_claims=True)
+        plugin = OIDCLogin.objects.create(provider=self.provider, insist_on_required_claims=True, claims={})
         self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
         self.backend.request._messages = FallbackStorage(self.backend.request)
         user = get_user_model().objects.create(username="user", email='foo@foo.foo')
@@ -336,7 +360,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
     def test_get_or_create_user_is_authenticated_openid2_id_already_paired(self, mock_req, mock_verify_claims):
         mock_req.get("https://foo.foo/user", json={'email': 'foo@foo.foo', 'openid2_id': 'oid'})
         mock_verify_claims.return_value = True
-        plugin = OIDCLogin.objects.create(provider=self.provider, insist_on_required_claims=True)
+        plugin = OIDCLogin.objects.create(provider=self.provider, insist_on_required_claims=True, claims={})
         self.backend.request.session[DJANGOCMS_PLUGIN_SESSION_KEY] = (plugin.consumer_type, plugin.pk)
         self.backend.request._messages = FallbackStorage(self.backend.request)
         user = get_user_model().objects.create(username="user", email='foo@foo.foo')
@@ -422,7 +446,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
             self.backend.not_authenticated_user(self.backend.request, user_info, self.plugin)
 
     def test_not_authenticated_user_can_login(self):
-        plugin = OIDCLogin.objects.create(provider=self.provider)
+        plugin = OIDCLogin.objects.create(provider=self.provider, claims={})
         user_info = {'email': 'foo@foo.foo'}
         self.backend.request._messages = FallbackStorage(self.backend.request)
         response = self.backend.not_authenticated_user(self.backend.request, user_info, plugin)
@@ -435,7 +459,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         ])
 
     def test_not_authenticated_user_can_login_with_openid2_id(self):
-        plugin = OIDCLogin.objects.create(provider=self.provider)
+        plugin = OIDCLogin.objects.create(provider=self.provider, claims={})
         user_info = {'email': 'foo@foo.foo', 'openid2_id': '4242'}
         self.backend.request._messages = FallbackStorage(self.backend.request)
         response = self.backend.not_authenticated_user(self.backend.request, user_info, plugin)
@@ -449,7 +473,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         ])
 
     def test_not_authenticated_user_can_login_no_new_user(self):
-        plugin = OIDCLogin.objects.create(provider=self.provider, no_new_user=True)
+        plugin = OIDCLogin.objects.create(provider=self.provider, no_new_user=True, claims={})
         user_info = {'email': 'foo@foo.foo'}
         self.backend.request._messages = FallbackStorage(self.backend.request)
         response = self.backend.not_authenticated_user(self.backend.request, user_info, plugin)

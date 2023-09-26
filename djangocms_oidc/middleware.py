@@ -6,11 +6,11 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.utils.crypto import get_random_string
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from mozilla_django_oidc.middleware import SessionRefresh
 from mozilla_django_oidc.utils import absolutify
 
-from .helpers import get_consumer
+from .helpers import get_consumer, request_is_ajax
 
 LOGGER = logging.getLogger("djangocms_oidc")
 
@@ -68,8 +68,8 @@ class OIDCSessionRefresh(SessionRefresh):
             request.session['oidc_login_next'] = consumer.redirect_page.get_absolute_url()
 
         query = urlencode(params)
-        redirect_url = '{url}?{query}'.format(url=consumer.provider.authorization_endpoint, query=query)
-        if request.is_ajax():
+        redirect_url = f'{consumer.provider.authorization_endpoint}?{query}'
+        if request_is_ajax(request):
             # Almost all XHR request handling in client-side code struggles
             # with redirects since redirecting to a page where the user
             # is supposed to do something is extremely unlikely to work

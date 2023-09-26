@@ -61,20 +61,21 @@ class TestOIDCHandoverDataPlugin(CreateProviderTestCase):
 
     def test_get_verified_as(self):
         user_info = {}
-        model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider)
+        model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider, claims={})
         plugin_instance = model_instance.get_plugin_class_instance()
         name = plugin_instance.get_verified_as(model_instance, user_info)
         self.assertEqual(name, 'User')
 
     def test_get_verified_as_email(self):
         user_info = {'email': 'mail@foo.foo', 'name': 'Tester'}
-        model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider, verified_by="email")
+        model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider, verified_by="email",
+                                            claims={})
         plugin_instance = model_instance.get_plugin_class_instance()
         name = plugin_instance.get_verified_as(model_instance, user_info)
         self.assertEqual(name, 'mail@foo.foo')
 
     def test_plugin_context(self):
-        model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider)
+        model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider, claims={})
         plugin_instance = model_instance.get_plugin_class_instance()
         request = self._create_request()
         context = plugin_instance.render({'request': request}, model_instance, None)
@@ -83,7 +84,8 @@ class TestOIDCHandoverDataPlugin(CreateProviderTestCase):
             'client_id': 'example_id', 'expires_at': None, 'consumer_type': 'MANAGED'})
 
     def test_plugin_context_with_user_info(self):
-        model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider, verified_by="name")
+        model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider, verified_by="name",
+                                            claims={})
         plugin_instance = model_instance.get_plugin_class_instance()
         request = self._create_request()
         request.session[DJANGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
@@ -96,7 +98,7 @@ class TestOIDCHandoverDataPlugin(CreateProviderTestCase):
         self.assertEqual(context['djangocms_oidc_verified_as'], 'Tester')
 
     def test_plugin_html(self):
-        model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider)
+        model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider, claims={})
         request = self._create_request()
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request})
@@ -111,7 +113,8 @@ class TestOIDCHandoverDataPlugin(CreateProviderTestCase):
             </span>""".format(model_id=model_instance.pk))
 
     def test_plugin_html_with_user_info(self):
-        model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider, verified_by="name")
+        model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider, verified_by="name",
+                                            claims={})
         request = self._create_request()
         request.session[DJANGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
         renderer = ContentRenderer(request=RequestFactory())
@@ -131,7 +134,8 @@ class TestOIDCHandoverDataPlugin(CreateProviderTestCase):
             </span>""".format(model_id=model_instance.pk))
 
     def test_plugin_html_with_user_info_and_urls_all_required_handovered(self):
-        model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider, verified_by="name")
+        model_instance = self._create_model(OIDCHandoverDataPlugin, provider=self.provider, verified_by="name",
+                                            claims={})
         model_instance.provider.account_url = "https://provider.foo/account"
         model_instance.provider.logout_url = "https://provider.foo/logout"
         request = self._create_request()
@@ -194,9 +198,9 @@ class TestOIDCHandoverDataPlugin(CreateProviderTestCase):
     def test_plugin_html_with_automatic_registration(self):
         provider = OIDCProvider.objects.create(name="Autoregistraion Provider", slug="autoreg-provider")
         placeholder = Placeholder.objects.create(slot='test')
-        model_instance = add_plugin(placeholder, OIDCHandoverDataPlugin, 'en', provider=provider)
+        model_instance = add_plugin(placeholder, OIDCHandoverDataPlugin, 'en', provider=provider, claims={})
         request = self._create_request()
-        cache.cache.set('prefix:djangocms_oidc_provider:{}'.format(provider.pk), {
+        cache.cache.set(f'prefix:djangocms_oidc_provider:{provider.pk}', {
             'client_id': 42,
             'expires_at': datetime.datetime(2020, 10, 7, 14, 42, 21)
         })
@@ -216,7 +220,7 @@ class TestOIDCHandoverDataPlugin(CreateProviderTestCase):
 class TestOIDCLoginPluginPlugin(CreateProviderTestCase):
 
     def test_plugin_context(self):
-        model_instance = self._create_model(OIDCLoginPlugin, provider=self.provider)
+        model_instance = self._create_model(OIDCLoginPlugin, provider=self.provider, claims={})
         plugin_instance = model_instance.get_plugin_class_instance()
         request = self._create_request()
         context = plugin_instance.render({'request': request}, model_instance, None)
@@ -225,7 +229,7 @@ class TestOIDCLoginPluginPlugin(CreateProviderTestCase):
             'client_id': 'example_id', 'expires_at': None, 'consumer_type': 'MANAGED'})
 
     def test_plugin_html(self):
-        model_instance = self._create_model(OIDCLoginPlugin, provider=self.provider)
+        model_instance = self._create_model(OIDCLoginPlugin, provider=self.provider, claims={})
         request = self._create_request()
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request})
@@ -240,7 +244,7 @@ class TestOIDCLoginPluginPlugin(CreateProviderTestCase):
             </span>""".format(model_id=model_instance.pk))
 
     def test_plugin_html_with_user_info(self):
-        model_instance = self._create_model(OIDCLoginPlugin, provider=self.provider, verified_by="name")
+        model_instance = self._create_model(OIDCLoginPlugin, provider=self.provider, verified_by="name", claims={})
         request = self._create_request()
         request.session[DJANGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo', 'name': 'Tester'}
         renderer = ContentRenderer(request=RequestFactory())
@@ -266,7 +270,7 @@ class TestOIDCLoginPluginPlugin(CreateProviderTestCase):
             </span>""".format(model_id=model_instance.pk))
 
     def test_plugin_html_with_user_info_and_urls_all_required_handovered(self):
-        model_instance = self._create_model(OIDCLoginPlugin, provider=self.provider, verified_by="name")
+        model_instance = self._create_model(OIDCLoginPlugin, provider=self.provider, verified_by="name", claims={})
         model_instance.provider.account_url = "https://provider.foo/account"
         model_instance.provider.logout_url = "https://provider.foo/logout"
         request = self._create_request()
@@ -342,7 +346,7 @@ class TestOIDCLoginPluginPlugin(CreateProviderTestCase):
             </span>""".format(model_id=model_instance.pk))
 
     def test_plugin_html_no_new_user(self):
-        model_instance = self._create_model(OIDCLoginPlugin, provider=self.provider, no_new_user=True)
+        model_instance = self._create_model(OIDCLoginPlugin, provider=self.provider, no_new_user=True, claims={})
         request = self._create_request()
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request})
@@ -363,7 +367,7 @@ class TestOIDCLoginPluginPlugin(CreateProviderTestCase):
             </span>""".format(model_id=model_instance.pk))
 
     def test_plugin_html_user_is_authenticated(self):
-        model_instance = self._create_model(OIDCLoginPlugin, provider=self.provider)
+        model_instance = self._create_model(OIDCLoginPlugin, provider=self.provider, claims={})
         request = self._create_request()
         request.user = get_user_model()()
         renderer = ContentRenderer(request=RequestFactory())

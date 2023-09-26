@@ -4,21 +4,21 @@
 {% block content %}
     <p>
         {% if adminform.form.instance.can_login %}
-            {% blocktrans trimmed %}
+            {% blocktranslate trimmed %}
                 This plugin is used to log in a user through authentication with an identity provider.
                 If you only want to handover data from the identity provider, but not log in the user, use the "OIDC Handover data".
                 Caution! If the plugin creates new users! If you do not want to create them, check the "No new user" radio button.
                 When this switch is checked, the plugin pairs the identity from the provider with the logged in user.
-            {% endblocktrans %}
+            {% endblocktranslate %}
         {% else %}
-            {% blocktrans trimmed %}
+            {% blocktranslate trimmed %}
                 This plugin is only used to handover data from the identity provider.
                 Use the "OIDC Login" plugin to log users in.
-            {% endblocktrans %}
+            {% endblocktranslate %}
         {% endif %}
     </p>
     {{ block.super }}
-    <h4>{% trans "Claims example:" %}</h4>
+    <h4>{% translate "Claims example:" %}</h4>
     <pre>
 {
     "userinfo": {
@@ -49,12 +49,12 @@
 }
     </pre>
 
-    <h4>{% trans "Verified by names:" %}</h4>
+    <h4>{% translate "Verified by names:" %}</h4>
     <pre>name given_name+family_name preferred_username nickname email openid2_id</pre>
     <p>
-        {% blocktrans trimmed %}
+        {% blocktranslate trimmed %}
             The list of names is scrolled in the specified order until the value is found.
             For names composed of a plus sign, the value consist of them.
-        {% endblocktrans %}
+        {% endblocktranslate %}
     </p>
 {% endblock %}

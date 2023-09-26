@@ -83,3 +83,6 @@ ROOT_URLCONF = 'djangocms_oidc.tests.urls'
 
 OIDC_AUTHENTICATE_CLASS = "djangocms_oidc.views.DjangocmsOIDCAuthenticationRequestView"
 OIDC_CALLBACK_CLASS = "djangocms_oidc.views.DjangocmsOIDCAuthenticationCallbackView"
+
+OIDC_OP_AUTHORIZATION_ENDPOINT = "https://foo.foo/authorization-endpoint"
+OIDC_RP_CLIENT_ID = "cid"

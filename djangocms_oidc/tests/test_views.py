@@ -44,7 +44,7 @@ class TestOIDCSignupView(CollectMessagesMixin, CMSTestCase):
         cls.provider = OIDCProvider.objects.create(
             name="Provider", slug="provider", register_consumer=cls.register_consumer,
             authorization_endpoint="https://foo.foo/authorization-endpoint")
-        cls.consumer = OIDCHandoverData.objects.create(provider=cls.provider)
+        cls.consumer = OIDCHandoverData.objects.create(provider=cls.provider, claims={})
 
     def setUp(self):
         cache.cache.clear()
@@ -56,11 +56,11 @@ class TestOIDCSignupView(CollectMessagesMixin, CMSTestCase):
         self.assertEqual(self._get_messages(response.wsgi_request), [
             (messages.ERROR, 'OIDC Consumer activation falied. Please try again.')
         ])
-        data = cache.cache.get('prefix:djangocms_oidc_provider:{}'.format(self.provider.pk))
+        data = cache.cache.get(f'prefix:djangocms_oidc_provider:{self.provider.pk}')
         self.assertIsNone(data)
 
     def test_signup_progress(self):
-        cache.cache.set('prefix:djangocms_oidc_provider:{}'.format(self.provider.pk), '--PROGRESS--')
+        cache.cache.set(f'prefix:djangocms_oidc_provider:{self.provider.pk}', '--PROGRESS--')
         url = reverse('djangocms_oidc_signup', kwargs={
             'consumer_type': self.consumer.consumer_type, 'plugin_id': self.consumer.pk})
         response = self.client.get(url)
@@ -68,7 +68,7 @@ class TestOIDCSignupView(CollectMessagesMixin, CMSTestCase):
         self.assertEqual(self._get_messages(response.wsgi_request), [
             (messages.INFO, 'Communication with the provider is in progress. Please try again later.')
         ])
-        data = cache.cache.get('prefix:djangocms_oidc_provider:{}'.format(self.provider.pk))
+        data = cache.cache.get(f'prefix:djangocms_oidc_provider:{self.provider.pk}')
         self.assertEqual(data, '--PROGRESS--')
 
     @requests_mock.Mocker()
@@ -82,7 +82,7 @@ class TestOIDCSignupView(CollectMessagesMixin, CMSTestCase):
             (messages.ERROR, 'Communication with the provider failed. Please try again later.'),
             (messages.ERROR, '404 Client Error: None for url: https://foo.foo/register'),
         ])
-        data = cache.cache.get('prefix:djangocms_oidc_provider:{}'.format(self.provider.pk))
+        data = cache.cache.get(f'prefix:djangocms_oidc_provider:{self.provider.pk}')
         self.assertEqual(data, '--PROGRESS--')
 
     @requests_mock.Mocker()
@@ -98,11 +98,11 @@ class TestOIDCSignupView(CollectMessagesMixin, CMSTestCase):
         self.assertRedirects(response, "{}?next=/&prompt=login".format(reverse("oidc_authentication_init")),
                              target_status_code=302)
         self.assertEqual(self._get_messages(response.wsgi_request), [])
-        data = cache.cache.get('prefix:djangocms_oidc_provider:{}'.format(self.provider.pk))
+        data = cache.cache.get(f'prefix:djangocms_oidc_provider:{self.provider.pk}')
         self.assertEqual(data, self.consumer_registration)
 
     def test_provider_already_registered(self):
-        cache.cache.set('prefix:djangocms_oidc_provider:{}'.format(self.provider.pk), self.consumer_registration)
+        cache.cache.set(f'prefix:djangocms_oidc_provider:{self.provider.pk}', self.consumer_registration)
         url = reverse('djangocms_oidc_signup', kwargs={
             'consumer_type': self.consumer.consumer_type, 'plugin_id': self.consumer.pk})
         session = self.client.session
@@ -112,7 +112,7 @@ class TestOIDCSignupView(CollectMessagesMixin, CMSTestCase):
         self.assertIsNone(self.client.session.get(DJANGOCMS_USER_SESSION_KEY))
         self.assertRedirects(response, "{}?next=/".format(reverse("oidc_authentication_init")), target_status_code=302)
         self.assertEqual(self._get_messages(response.wsgi_request), [])
-        data = cache.cache.get('prefix:djangocms_oidc_provider:{}'.format(self.provider.pk))
+        data = cache.cache.get(f'prefix:djangocms_oidc_provider:{self.provider.pk}')
         self.assertEqual(data, self.consumer_registration)
 
 
@@ -279,7 +279,7 @@ class TestDjangocmsOIDCAuthenticationRequestView(CreateRequestMixin, CollectMess
         cls.provider = OIDCProvider.objects.create(
             name="Provider", slug="provider", client_id="1234567890", client_secret="secret",
             authorization_endpoint="https://foo.foo/authorization-endpoint")
-        cls.consumer = OIDCHandoverData.objects.create(provider=cls.provider)
+        cls.consumer = OIDCHandoverData.objects.create(provider=cls.provider, claims={})
 
     def setUp(self):
         cache.cache.clear()
@@ -320,7 +320,7 @@ class TestDjangocmsOIDCAuthenticationRequestView(CreateRequestMixin, CollectMess
             ('nonce', 'random'),
             ('claims', '{}'),
         ])
-        url = "https://foo.foo/authorization-endpoint?{}".format(urlencode(query))
+        url = f"https://foo.foo/authorization-endpoint?{urlencode(query)}"
         self.assertRedirects(response, url, fetch_redirect_response=False)
 
     @override_settings(OIDC_USE_NONCE=False)
@@ -347,7 +347,7 @@ class TestDjangocmsOIDCAuthenticationRequestView(CreateRequestMixin, CollectMess
             ('state', 'random'),
             ('claims', '{}'),
         ])
-        url = "https://foo.foo/authorization-endpoint?{}".format(urlencode(query))
+        url = f"https://foo.foo/authorization-endpoint?{urlencode(query)}"
         self.assertRedirects(response, url, fetch_redirect_response=False)
 
     def test_get_extra_params_consumer_is_none(self):
@@ -366,7 +366,7 @@ class TestDjangocmsOIDCAuthenticationRequestView(CreateRequestMixin, CollectMess
     def test_get_extra_params_consumer_with_claims(self):
         request = self._create_request()
         authreq = DjangocmsOIDCAuthenticationRequestView()
-        consumer = OIDCHandoverData.objects.create(provider=self.provider)
+        consumer = OIDCHandoverData.objects.create(provider=self.provider, claims={})
         consumer.claims = {'email': {'essential': True}}
         params = authreq.get_extra_params(request, consumer)
         self.assertEqual(params, {'claims': '{"email": {"essential": true}}'})
@@ -374,7 +374,7 @@ class TestDjangocmsOIDCAuthenticationRequestView(CreateRequestMixin, CollectMess
     def test_get_extra_params_authorization_prompt(self):
         request = self._create_request()
         authreq = DjangocmsOIDCAuthenticationRequestView()
-        consumer = OIDCHandoverData.objects.create(provider=self.provider)
+        consumer = OIDCHandoverData.objects.create(provider=self.provider, claims={})
         consumer.claims = {'email': {'essential': True}}
         consumer.authorization_prompt = ['login']
         params = authreq.get_extra_params(request, consumer)
@@ -386,7 +386,7 @@ class TestDjangocmsOIDCAuthenticationRequestView(CreateRequestMixin, CollectMess
     def test_get_extra_params_authorization_prompt_get(self):
         request = self._create_request_get('?prompt=consent,login,foo,none')
         authreq = DjangocmsOIDCAuthenticationRequestView()
-        consumer = OIDCHandoverData.objects.create(provider=self.provider)
+        consumer = OIDCHandoverData.objects.create(provider=self.provider, claims={})
         consumer.claims = {'email': {'essential': True}}
         consumer.authorization_prompt = ['login']
         params = authreq.get_extra_params(request, consumer)
@@ -397,7 +397,7 @@ class TestDjangocmsOIDCAuthenticationRequestView(CreateRequestMixin, CollectMess
     def test_get_extra_params_authorization_prompt_get_none(self):
         request = self._create_request_get('?prompt=none')
         authreq = DjangocmsOIDCAuthenticationRequestView()
-        consumer = OIDCHandoverData.objects.create(provider=self.provider)
+        consumer = OIDCHandoverData.objects.create(provider=self.provider, claims={})
         consumer.claims = {'email': {'essential': True}}
         params = authreq.get_extra_params(request, consumer)
         self.assertEqual(params, {
@@ -413,7 +413,7 @@ class TestDjangocmsOIDCAuthenticationCallbackView(CreateRequestMixin, CollectMes
         cls.provider = OIDCProvider.objects.create(
             name="Provider", slug="provider", client_id="1234567890", client_secret="secret",
             authorization_endpoint="https://foo.foo/authorization-endpoint")
-        cls.consumer = OIDCLogin.objects.create(provider=cls.provider)
+        cls.consumer = OIDCLogin.objects.create(provider=cls.provider, claims={})
 
     def test_failure_url(self):
         callback = DjangocmsOIDCAuthenticationCallbackView()

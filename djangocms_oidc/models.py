@@ -1,7 +1,6 @@
 import datetime
 import logging
 
-import jsonfield
 import requests
 from cms.models.fields import PageField
 from cms.models.pluginmodel import CMSPlugin
@@ -10,7 +9,7 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from multiselectfield import MultiSelectField
 from requests.exceptions import RequestException
 
@@ -122,13 +121,13 @@ class OIDCProvider(CMSPlugin):
         return cache.get(self.get_cache_key()) is None
 
     def get_cache_key(self):
-        return get_cache_key("djangocms_oidc_provider:{}".format(self.pk))
+        return get_cache_key(f"djangocms_oidc_provider:{self.pk}")
 
     def registration_in_progress(self):
         return cache.get(self.get_cache_key()) == self.progress_code
 
     def register_consumer_into_cache(self, redirect_uris):
-        logger.info("Register consumer at {}".format(self.register_consumer.register_url))
+        logger.info(f"Register consumer at {self.register_consumer.register_url}")
         key = self.get_cache_key()
         cache.set(key, self.progress_code, 10)  # Assign the key for 10 seconds.
         try:
@@ -144,14 +143,14 @@ class OIDCProvider(CMSPlugin):
             expires_at = datetime.datetime.fromtimestamp(data['client_secret_expires_at'])
             expires_at = timezone.make_aware(expires_at, timezone.utc)
             duration = expires_at.timestamp() - timezone.now().timestamp()
-        logger.info("Expires at {}".format(expires_at))
+        logger.info(f"Expires at {expires_at}")
         content = {
             'client_id': data['client_id'],
             'client_secret': data['client_secret'],
             'expires_at': expires_at,
         }
         cache.set(key, content, duration)
-        logger.debug("Store into cache: {} for {} sec.".format(key, duration))
+        logger.debug(f"Store into cache: {key} for {duration} sec.")
         return None
 
     def get_registration_consumer_info(self):
@@ -209,7 +208,7 @@ class OIDCHandoverDataBase(CMSPlugin):
     button_label = models.CharField(
         verbose_name=_('Button label'), max_length=80, null=True, blank=True,
         help_text=_("Button text for unlogged in user."))
-    claims = jsonfield.JSONField(
+    claims = models.JSONField(
         verbose_name=_("Claims"), validators=[validate_claims], help_text=_("Claims attributes for data handover."))
     insist_on_required_claims = models.BooleanField(
         verbose_name=_("Insist on required claims"), default=False,

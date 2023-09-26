@@ -7,13 +7,13 @@ from django.contrib.auth import logout
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.utils.crypto import get_random_string
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 from mozilla_django_oidc.utils import absolutify, add_state_and_nonce_to_session, import_from_settings
 from mozilla_django_oidc.views import OIDCAuthenticationCallbackView, OIDCAuthenticationRequestView, get_next_url
 
 from .constants import DJANGOCMS_PLUGIN_SESSION_KEY, DJANGOCMS_USER_SESSION_KEY
-from .helpers import get_consumer, get_user_identifiers_formset, load_consumer, set_consumer
+from .helpers import get_consumer, get_user_identifiers_formset, load_consumer, request_is_ajax, set_consumer
 
 LOGGER = logging.getLogger("djangocms_oidc")
 
@@ -92,7 +92,7 @@ class OIDCDeleteIdentifiersView(View):
     http_method_names = ['post']
 
     def post(self, request, *args, **kwargs):
-        if request.user.is_authenticated and 'djangocms_oidc_delete_identifier' in request.POST:
+        if request.user.is_authenticated:
             data = {'result': "NOCHANGE"}
             formset = get_user_identifiers_formset(request.user, request.POST, request.FILES)
             if formset.is_valid():
@@ -103,7 +103,7 @@ class OIDCDeleteIdentifiersView(View):
             else:
                 data['result'] = "ERROR"
                 data['messages'] = formset.errors
-            if request.is_ajax():
+            if request_is_ajax(request):
                 return JsonResponse(data)
             elif data['result'] == "SUCCESS":
                 messages.success(request, _("Identifier has been deleted."))
@@ -182,7 +182,7 @@ class DjangocmsOIDCAuthenticationRequestView(OIDCAuthenticationRequestView):
 
         params.update(self.get_extra_params(request, consumer))
         query = urlencode(params)
-        redirect_url = '{url}?{query}'.format(url=consumer.provider.authorization_endpoint, query=query)
+        redirect_url = f'{consumer.provider.authorization_endpoint}?{query}'
         return HttpResponseRedirect(redirect_url)
 
 

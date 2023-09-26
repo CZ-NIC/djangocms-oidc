@@ -5,7 +5,6 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import djangocms_oidc.models
-import jsonfield.fields
 
 
 class Migration(migrations.Migration):
@@ -75,7 +74,7 @@ class Migration(migrations.Migration):
             name='OIDCLogin',
             fields=[
                 ('cmsplugin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='djangocms_oidc_oidclogin', serialize=False, to='cms.CMSPlugin')),
-                ('claims', jsonfield.fields.JSONField(default=dict, help_text='Claims attributes for data handover.', validators=[djangocms_oidc.models.validate_claims], verbose_name='Claims')),
+                ('claims', models.JSONField(default=dict, help_text='Claims attributes for data handover.', validators=[djangocms_oidc.models.validate_claims], verbose_name='Claims')),
                 ('insist_on_required_claims', models.BooleanField(default=False, help_text='Consider the data invalid if not all the required data has been handovered.', verbose_name='Insist on required claims')),
                 ('verified_by', models.CharField(blank=True, help_text='Verified by names (separated by space).', max_length=255, null=True, verbose_name='Verified by names')),
                 ('authorization_prompt', models.CharField(blank=True, choices=[('none', 'No interaction'), ('login', 'Force login'), ('consent', 'Force consent with handovered data')], help_text='Prompt for user at authorization. "No interaction" cannot be combined with others.', max_length=255, null=True, verbose_name='Prompt')),
@@ -105,7 +104,7 @@ class Migration(migrations.Migration):
             name='OIDCHandoverData',
             fields=[
                 ('cmsplugin_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='djangocms_oidc_oidchandoverdata', serialize=False, to='cms.CMSPlugin')),
-                ('claims', jsonfield.fields.JSONField(default=dict, help_text='Claims attributes for data handover.', validators=[djangocms_oidc.models.validate_claims], verbose_name='Claims')),
+                ('claims', models.JSONField(default=dict, help_text='Claims attributes for data handover.', validators=[djangocms_oidc.models.validate_claims], verbose_name='Claims')),
                 ('insist_on_required_claims', models.BooleanField(default=False, help_text='Consider the data invalid if not all the required data has been handovered.', verbose_name='Insist on required claims')),
                 ('verified_by', models.CharField(blank=True, help_text='Verified by names (separated by space).', max_length=255, null=True, verbose_name='Verified by names')),
                 ('authorization_prompt', models.CharField(blank=True, choices=[('none', 'No interaction'), ('login', 'Force login'), ('consent', 'Force consent with handovered data')], help_text='Prompt for user at authorization. "No interaction" cannot be combined with others.', max_length=255, null=True, verbose_name='Prompt')),

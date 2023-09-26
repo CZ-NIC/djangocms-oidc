@@ -13,7 +13,7 @@ class TestHelpers(TestCase):
         cls.provider = OIDCProvider.objects.create(
             name="Provider", slug="provider", client_id="example_id", client_secret="client_secret",
             token_endpoint="https://foo.foo/token", user_endpoint="https://foo.foo/user")
-        cls.plugin = OIDCHandoverData.objects.create(provider=cls.provider)
+        cls.plugin = OIDCHandoverData.objects.create(provider=cls.provider, claims={})
         cls.user = get_user_model().objects.create(username="admin")
 
     def test_set_consumer(self):

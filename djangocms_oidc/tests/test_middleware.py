@@ -2,7 +2,7 @@ import datetime
 import json
 import re
 import time
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from urllib.parse import parse_qs
 
 from cms.api import create_page
@@ -33,11 +33,11 @@ class OIDCSessionRefreshTokenMiddlewareTestCase(TestCase):
             name="Provider", slug="provider", client_id="foo", client_secret="secret",
             token_endpoint="https://foo.foo/token", user_endpoint="https://foo.foo/user",
             authorization_endpoint='http://example.com/authorize')
-        cls.plugin = OIDCHandoverData.objects.create(provider=cls.provider)
+        cls.plugin = OIDCHandoverData.objects.create(provider=cls.provider, claims={})
 
     def setUp(self):
         self.factory = RequestFactory()
-        self.middleware = OIDCSessionRefresh()
+        self.middleware = OIDCSessionRefresh(MagicMock)
         self.user = User.objects.create_user('example_username')
 
     def test_anonymous(self):
@@ -103,7 +103,7 @@ class OIDCSessionRefreshTokenMiddlewareTestCase(TestCase):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest'
         )
         cms_page = create_page('test', 'test_content_plugin.html', 'en', slug="test")
-        plugin = OIDCHandoverData.objects.create(provider=self.provider, redirect_page=cms_page)
+        plugin = OIDCHandoverData.objects.create(provider=self.provider, redirect_page=cms_page, claims={})
         request.session = {DJANGOCMS_PLUGIN_SESSION_KEY: (plugin.consumer_type, plugin.pk)}
         request.user = self.user
 
@@ -218,11 +218,11 @@ class UserifiedClientHandler(ClientHandler):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
-        super(UserifiedClientHandler, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def get_response(self, req):
         req.user = self.user
-        return super(UserifiedClientHandler, self).get_response(req)
+        return super().get_response(req)
 
 
 class ClientWithUser(Client):
@@ -233,7 +233,7 @@ class ClientWithUser(Client):
         self.user = AnonymousUser()
         # Get this because we need to create a new UserifiedClientHandler later
         self.enforce_csrf_checks = enforce_csrf_checks
-        super(ClientWithUser, self).__init__(**defaults)
+        super().__init__(**defaults)
         # Stomp on the ClientHandler with one that correctly makes request.user
         # the AnonymousUser
         self.handler = UserifiedClientHandler(enforce_csrf_checks, user=self.user)
@@ -250,7 +250,7 @@ class ClientWithUser(Client):
             # unhelpful
             raise Exception('Unable to authenticate with %r' % sorted(credentials.items()))
 
-        ret = super(ClientWithUser, self).login(**credentials)
+        ret = super().login(**credentials)
         if not ret:
             raise Exception('Login failed')
 
@@ -270,7 +270,7 @@ class MiddlewareTestCase(TestCase):
             name="Provider", slug="provider", client_id="foo", client_secret="secret",
             token_endpoint="https://foo.foo/token", user_endpoint="https://foo.foo/user",
             authorization_endpoint='http://example.com/authorize')
-        cls.plugin = OIDCHandoverData.objects.create(provider=cls.provider)
+        cls.plugin = OIDCHandoverData.objects.create(provider=cls.provider, claims={})
 
     def setUp(self):
         self.factory = RequestFactory()
@@ -279,25 +279,25 @@ class MiddlewareTestCase(TestCase):
 
     @override_settings(OIDC_EXEMPT_URLS=['mdo_fake_view'])
     def test_get_exempt_urls_setting_view_name(self):
-        middleware = OIDCSessionRefresh()
+        middleware = OIDCSessionRefresh(MagicMock)
         self.assertEqual(
             sorted(list(middleware.exempt_urls)),
-            [u'/authenticate/', u'/callback/', u'/logout/', u'/mdo_fake_view/']
+            ['/authenticate/', '/callback/', '/logout/', '/mdo_fake_view/']
         )
 
     @override_settings(OIDC_EXEMPT_URLS=['/foo/'])
     def test_get_exempt_urls_setting_url_path(self):
-        middleware = OIDCSessionRefresh()
+        middleware = OIDCSessionRefresh(MagicMock)
         self.assertEqual(
             sorted(list(middleware.exempt_urls)),
-            [u'/authenticate/', u'/callback/', u'/foo/', u'/logout/']
+            ['/authenticate/', '/callback/', '/foo/', '/logout/']
         )
 
     def test_is_refreshable_url(self):
         request = self.factory.get('/mdo_fake_view/')
         request.user = self.user
         request.session = dict()
-        middleware = OIDCSessionRefresh()
+        middleware = OIDCSessionRefresh(MagicMock)
         assert middleware.is_refreshable_url(request)
 
     @override_settings(OIDC_EXEMPT_URLS=['mdo_fake_view'])
@@ -305,7 +305,7 @@ class MiddlewareTestCase(TestCase):
         request = self.factory.get('/mdo_fake_view/')
         request.user = self.user
         request.session = dict()
-        middleware = OIDCSessionRefresh()
+        middleware = OIDCSessionRefresh(MagicMock)
         assert not middleware.is_refreshable_url(request)
 
     @override_settings(OIDC_EXEMPT_URLS=['/mdo_fake_view/'])
@@ -313,7 +313,7 @@ class MiddlewareTestCase(TestCase):
         request = self.factory.get('/mdo_fake_view/')
         request.user = self.user
         request.session = dict()
-        middleware = OIDCSessionRefresh()
+        middleware = OIDCSessionRefresh(MagicMock)
         assert not middleware.is_refreshable_url(request)
 
     @override_settings(OIDC_EXEMPT_URLS=[re.compile(r'^/mdo_.*_view/$')])
@@ -321,7 +321,7 @@ class MiddlewareTestCase(TestCase):
         request = self.factory.get('/mdo_fake_view/')
         request.user = self.user
         request.session = dict()
-        middleware = OIDCSessionRefresh()
+        middleware = OIDCSessionRefresh(MagicMock)
         assert not middleware.is_refreshable_url(request)
 
     def test_anonymous(self):

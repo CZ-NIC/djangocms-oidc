@@ -1,10 +1,4 @@
-.. image:: https://travis-ci.org/CZ-NIC/djangocms-oidc.svg?branch=master
-   :alt: Build Status
-   :target: https://travis-ci.org/CZ-NIC/djangocms-oidc
-
-.. image:: https://codecov.io/gh/CZ-NIC/djangocms-oidc/branch/master/graph/badge.svg
-   :alt: Coverage
-   :target: https://codecov.io/gh/CZ-NIC/djangocms-oidc
+|Build Status| |Coverage| |Pypi package| |Pypi status| |Python versions| |License|
 
 
 ===============================
@@ -19,7 +13,7 @@ Installation
 
 .. code-block:: shell
 
-    $ pip install git+https://github.com/CZ-NIC/djangocms-oidc
+    $ pip install djangocms-oidc
 
 
 Caution! If you are using project `django-python3-ldap <https://github.com/etianen/django-python3-ldap>`_, you must use version higher than ``0.11.3``.
@@ -39,30 +33,29 @@ Start by making the following changes to your ``settings.py`` file.
 .. code-block:: python
 
    # Add 'mozilla_django_oidc' and 'djangocms_oidc' to INSTALLED_APPS
-   INSTALLED_APPS = (
+   INSTALLED_APPS = [
        # ...
        'multiselectfield',
        'django_countries',
        'mozilla_django_oidc',  # place after auth (django.contrib.auth)
        'djangocms_oidc',
-       # ...
-   )
+   ]
 
-   AUTHENTICATION_BACKENDS = (
+   AUTHENTICATION_BACKENDS = [
        # ...
        'djangocms_oidc.auth.DjangocmsOIDCAuthenticationBackend',
-       # ...
-   )
+   ]
 
-   MIDDLEWARE = (
+   MIDDLEWARE = [
        # ...
        'djangocms_oidc.middleware.OIDCSessionRefresh',
-       # ...
-   )
+   ]
 
    # Define OIDC classes
    OIDC_AUTHENTICATE_CLASS = "djangocms_oidc.views.DjangocmsOIDCAuthenticationRequestView"
    OIDC_CALLBACK_CLASS = "djangocms_oidc.views.DjangocmsOIDCAuthenticationCallbackView"
+   OIDC_OP_AUTHORIZATION_ENDPOINT = "https://example.com/authorization-endpoint"
+   OIDC_RP_CLIENT_ID = "myClientId"
 
 
 Add OIDC urls to urls.py
@@ -74,58 +67,9 @@ Modify your project ``urls.py`` file.
 
     urlpatterns = [
         # ....
-        url(r'^oidc/', include('mozilla_django_oidc.urls')),
-        url(r'^djangocms-oidc/', include('djangocms_oidc.urls')),
-        # ....
+        path('oidc/', include('mozilla_django_oidc.urls')),
+        path('djangocms-oidc/', include('djangocms_oidc.urls')),
     ]
-
-
-
-Example of installation
-=======================
-
-You can test in python virtual environment. This does not have any affest to your current python installation of packages.
-
-Create python virtual environment and activate it:
-
-.. code-block:: shell
-
-    $ virtualenv --python=/usr/bin/python3 env
-    $ source env/bin/activate
-
-Install DjangoCMS and this projects:
-
-.. code-block:: shell
-
-    $ pip install djangocms-installer
-    $ pip install git+https://github.com/CZ-NIC/djangocms-oidc
-
-Create CMS testing site and go to the main project folder:
-
-.. code-block:: shell
-
-    $ djangocms mysite
-
-Modify settings and urls with the `mysite-django-3.1.3.patch <accessoires/mysite-django-3.1.3.patch>`_:
-
-.. code-block:: shell
-
-    $ patch -p0 < accessoires/mysite-django-3.1.3.patch
-
-Migrage new installed plugins:
-
-.. code-block:: shell
-
-    $ cd mysite
-    $ python manage.py migrate
-
-
-Run test server:
-
-.. code-block:: shell
-
-    $ python manage.py runserver
-
 
 
 Settings
@@ -188,13 +132,54 @@ Page structure: Add
  | Verified by names: ... (copy from the example below)
 
 
+How to run an example
+=====================
+
+Run the example in Docker. Install as follows:
+
+.. code-block:: shell
+
+    $ git clone https://github.com/CZ-NIC/djangocms-oidc-form-fields.git
+    $ cd djangocms-oidc-form-fields/example
+    $ docker-compose build web
+    $ docker-compose run --user $(id -u):$(id -g) web python manage.py migrate
+    $ docker-compose run --user $(id -u):$(id -g) web python manage.py loaddata site.json
+
+Start the webserver:
+
+.. code-block:: shell
+
+    $ docker-compose up -d
+
+Open in your browser: http://localhost:8000/. To log in to the administrations use ``admin:password`` at http://localhost:8000/admin.
+
+Stop the webserver:
+
+.. code-block:: shell
+
+    $ docker-compose down
+
 License
 -------
 
 This software is licensed under the GNU GPL license. For more info check the LICENSE file.
 
 
-More information
-----------------
-
-You can get the code from the `project site <https://github.com/CZ-NIC/djangocms-oidc>`_.
+.. |Build Status| image:: https://travis-ci.org/CZ-NIC/djangocms-oidc.svg?branch=master
+    :target: https://travis-ci.org/CZ-NIC/djangocms-oidc
+    :alt: Build Status
+.. |Coverage| image:: https://codecov.io/gh/CZ-NIC/djangocms-oidc/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/CZ-NIC/djangocms-oidc
+    :alt: Coverage
+.. |Pypi package| image:: https://img.shields.io/pypi/v/djangocms-oidc.svg
+    :target: https://pypi.python.org/pypi/djangocms-oidc/
+    :alt: Pypi package
+.. |Pypi status| image:: https://img.shields.io/pypi/status/djangocms-oidc.svg
+   :target: https://pypi.python.org/pypi/djangocms-oidc
+   :alt: status
+.. |Python versions| image:: https://img.shields.io/pypi/pyversions/djangocms-oidc.svg
+   :target: https://pypi.python.org/pypi/djangocms-oidc
+   :alt: Python versions
+.. |License| image:: https://img.shields.io/pypi/l/djangocms-oidc.svg
+    :target: https://pypi.python.org/pypi/djangocms-oidc/
+    :alt: license

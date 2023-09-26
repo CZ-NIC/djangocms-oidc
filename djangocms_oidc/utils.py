@@ -1,6 +1,6 @@
 from cms.utils.conf import get_cms_setting
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_str
+from django.utils.translation import gettext_lazy as _
 from mozilla_django_oidc.utils import import_from_settings
 
 
@@ -32,7 +32,7 @@ def email_verified(context, instance, placeholder, user_info):
         messages.append(_("Email is not verified."))
     if messages:
         context['dedicated_content'] = "<ul class='messagelist'><li class='error'>{}</li></ul>".format(
-            " ".join([force_text(msg) for msg in messages]))
+            " ".join([force_str(msg) for msg in messages]))
     return len(messages) == 0
 
 

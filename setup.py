@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
 from distutils.command.build import build
 
 from setuptools import find_packages, setup
-from setuptools.command.sdist import sdist
 
 
 class CustomBuild(build):
@@ -15,33 +13,31 @@ setup(
     name='djangocms-oidc',
     version='3.0.1',
     description='Plugin OIDC (OpenID Connect) into Django CMS.',
+    long_description=open('README.rst').read(),
+    long_description_content_type='text/x-rst',
     url='https://github.com/CZ-NIC/djangocms-oidc',
     license='GPL GNU License',
     platforms=['OS Independent'],
     classifiers=(
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
-        'Framework :: DjangoCMS',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Framework :: Django CMS',
-        'Framework :: Django CMS :: 3.7',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Framework :: Django CMS :: 3.11',
     ),
     install_requires=(
-        'django-cms==3.7.4',
-        'mozilla-django-oidc==1.2.4',
-        'django-jsonfield',
-        'django-countries',
+        'django-cms~=3.11',
+        'mozilla-django-oidc~=3.0',
+        'django-countries~=7.5',
         'django-multiselectfield',
     ),
     extras_require={
