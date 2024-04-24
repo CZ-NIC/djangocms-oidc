@@ -44,11 +44,19 @@
         "email_verified": {"essential": true},
         "phone_number": {"essential": true},
         "phone_number_verified": {"essential": true},
-        "website": {"essential": false}
-    }
+        "website": {"essential": false},
+
+        "mojeid_valid": {"essential": true},
+    },
+    "debug_response": true
 }
     </pre>
-
+    <p>
+        Attention! The <code>mojeid_valid</code> attribute is only passed to a consumer with
+        <a href="https://www.mojeid.cz/documentation/singlehtml/index.html#term-Full-access" target="_blank">full access</a>
+        (see <i>Flag – validation</i> in <strong>Other data</strong> in
+        <a href="https://www.mojeid.cz/documentation/singlehtml/index.html#appendix-1-list-of-data-to-be-handed-over-openid-connect" target="_blank">List of Data to be Handed Over</a>).
+    </p>
     <h4>{% translate "Verified by names:" %}</h4>
     <pre>name given_name+family_name preferred_username nickname email openid2_id</pre>
     <p>
