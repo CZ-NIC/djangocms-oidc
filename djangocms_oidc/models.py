@@ -195,6 +195,11 @@ def validate_claims(value):
                 )
 
 
+def get_default_claim() -> dict[str, str]:
+    """Get default claim."""
+    return {"userinfo": {"openid2_id": {"essential": True}}}
+
+
 class OIDCHandoverDataBase(CMSPlugin):
 
     consumer_type = HANDOVER_DATA
@@ -210,7 +215,7 @@ class OIDCHandoverDataBase(CMSPlugin):
         help_text=_("Button text for unlogged in user."))
     claims = models.JSONField(
         verbose_name=_("Claims"), validators=[validate_claims], help_text=_("Claims attributes for data handover."),
-        default={"userinfo": {}})
+        default=get_default_claim)
     insist_on_required_claims = models.BooleanField(
         verbose_name=_("Insist on required claims"), default=False,
         help_text=_("Consider the data invalid if not all the required data has been handovered."))
