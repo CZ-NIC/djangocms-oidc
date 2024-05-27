@@ -12,4 +12,8 @@ class JsonDataTextarea(Textarea):
         if value == "" or value is None:
             return None
         # Reformat json data with indentation.
-        return json.dumps(json.loads(value), indent=4)
+        try:
+            return json.dumps(json.loads(value), indent=4)
+        except json.JSONDecodeError:
+            pass
+        return value
