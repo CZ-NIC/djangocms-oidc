@@ -11,7 +11,7 @@ setup(
     author='Zdeněk Böhm',
     author_email='zdenek.bohm@nic.cz',
     name='djangocms-oidc',
-    version='4.0.0',
+    version='4.1.0',
     description='Plugin OIDC (OpenID Connect) into Django CMS.',
     long_description=open('README.rst').read(),
     long_description_content_type='text/x-rst',
