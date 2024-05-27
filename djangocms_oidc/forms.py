@@ -7,6 +7,11 @@ from .widgets import JsonDataTextarea
 
 class OIDCDataForm(forms.ModelForm):
 
+    class Meta:
+        widgets = {
+            "claims": JsonDataTextarea,
+        }
+
     def clean_authorization_prompt(self):
         prompt = self.cleaned_data.get('authorization_prompt')
         if "none" in prompt and len(prompt) > 1:

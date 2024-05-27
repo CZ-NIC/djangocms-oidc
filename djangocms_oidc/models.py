@@ -209,7 +209,8 @@ class OIDCHandoverDataBase(CMSPlugin):
         verbose_name=_('Button label'), max_length=80, null=True, blank=True,
         help_text=_("Button text for unlogged in user."))
     claims = models.JSONField(
-        verbose_name=_("Claims"), validators=[validate_claims], help_text=_("Claims attributes for data handover."))
+        verbose_name=_("Claims"), validators=[validate_claims], help_text=_("Claims attributes for data handover."),
+        default={"userinfo": {}})
     insist_on_required_claims = models.BooleanField(
         verbose_name=_("Insist on required claims"), default=False,
         help_text=_("Consider the data invalid if not all the required data has been handovered."))
