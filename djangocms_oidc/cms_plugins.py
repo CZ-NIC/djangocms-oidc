@@ -3,7 +3,7 @@ from cms.plugin_pool import plugin_pool
 from django.utils.translation import gettext_lazy as _
 
 from .constants import DJANGOCMS_USER_SESSION_KEY
-from .forms import OIDCDataForm
+from .forms import OIDCDataForm, OIDCHandoverDataForm
 from .helpers import check_required_handovered, get_user_identifiers_formset, get_verified_as
 from .models import (
     OIDCDisplayDedicatedContent,
@@ -44,6 +44,7 @@ class OIDCConsumerBase(CMSPluginBase):
 class OIDCHandoverDataPlugin(OIDCConsumerBase):
     name = _('OIDC Handover data')
     model = OIDCHandoverData
+    form = OIDCHandoverDataForm
     render_template = "djangocms_oidc/handover_data.html"
 
 
