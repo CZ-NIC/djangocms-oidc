@@ -6,6 +6,7 @@ from cms.models.pluginmodel import CMSPlugin
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
 from cms.plugin_rendering import ContentRenderer
+from cms.toolbar.toolbar import CMSToolbar
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.core import cache
@@ -435,7 +436,7 @@ class TestOIDCDisplayDedicatedContentPlugin(CreateInstancesMixin, TestCase):
         html = renderer.render_plugin(model_instance, {'request': request})
         self.assertHTMLEqual(html, "<p>Test Content Plugin.</p>")
 
-    def test_plugin_html_conditions_uset_authenticated(self):
+    def test_plugin_html_conditions_user_authenticated_no_edit_mode(self):
         model_instance = self._create_model(OIDCDisplayDedicatedContentPlugin)
         self._create_plugin_content(model_instance)
         request = self._create_request()
@@ -443,7 +444,19 @@ class TestOIDCDisplayDedicatedContentPlugin(CreateInstancesMixin, TestCase):
         request.user = get_user_model()()
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request, 'user': request.user})
-        self.assertHTMLEqual(html, "<p>Test Content Plugin.</p>")
+        self.assertEqual(html.strip(), "")
+
+    def test_plugin_html_conditions_user_authenticated_in_edit_mode(self):
+        model_instance = self._create_model(OIDCDisplayDedicatedContentPlugin)
+        self._create_plugin_content(model_instance)
+        request = self._create_request()
+        request.current_page = None
+        request.user = get_user_model()()
+        request.toolbar = CMSToolbar(request)
+        request.toolbar.edit_mode_active = True
+        renderer = ContentRenderer(request=RequestFactory())
+        html = renderer.render_plugin(model_instance, {'request': request, 'user': request.user})
+        self.assertInHTML("<p>Test Content Plugin.</p>", html)
 
     def test_plugin_html_conditions_email_not_verified(self):
         model_instance = self._create_model(OIDCDisplayDedicatedContentPlugin, conditions='email_verified')
