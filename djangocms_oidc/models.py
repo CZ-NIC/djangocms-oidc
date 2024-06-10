@@ -292,6 +292,9 @@ class OIDCDisplayDedicatedContent(CMSPlugin):
         choices=[(code, label) for code, label, _ in get_display_content_settings()],
     )
 
+    def __str__(self):
+        return "?" if self.conditions is None else self.get_conditions_display()
+
 
 class OIDCShowAttribute(CMSPlugin):
     """Show attribute."""

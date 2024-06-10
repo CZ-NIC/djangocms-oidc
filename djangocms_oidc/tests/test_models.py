@@ -9,6 +9,7 @@ from freezegun import freeze_time
 
 from djangocms_oidc.models import (
     ConsumerRegistrationExpired,
+    OIDCDisplayDedicatedContent,
     OIDCHandoverData,
     OIDCProvider,
     OIDCRegisterConsumer,
@@ -244,3 +245,14 @@ class TestOIDCShowAttribute(SimpleTestCase):
     def test(self):
         show_arrib = OIDCShowAttribute(verified_by="Provider")
         self.assertEqual(str(show_arrib), "Provider")
+
+
+class TestOIDCDisplayDedicatedContent(TestCase):
+
+    def test_none(self):
+        model = OIDCDisplayDedicatedContent.objects.create()
+        self.assertEqual(str(model), "?")
+
+    def test_only_authenticated_user(self):
+        model = OIDCDisplayDedicatedContent.objects.create(conditions='only_authenticated_user')
+        self.assertEqual(str(model), "Only authenticated user")

@@ -1,5 +1,8 @@
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
+from django.conf import settings
+from django.utils.encoding import force_str
+from django.utils.functional import lazy
 from django.utils.translation import gettext_lazy as _
 
 from .constants import DJANGOCMS_USER_SESSION_KEY
@@ -70,10 +73,19 @@ class OIDCListIdentifiersPlugin(CMSPluginBase):
         return context
 
 
+def _set_field_name() -> str:
+    """Set field name."""
+    try:
+        name = settings.DJANGOCMS_OIDC_DISPLAY_DEDICATED_CONTENT_NAME
+    except AttributeError:
+        name = _('OIDC Display dedicated content')
+    return force_str(name)
+
+
 @plugin_pool.register_plugin
 class OIDCDisplayDedicatedContentPlugin(CMSPluginBase):
     module = _('OpenID Connect')
-    name = _('OIDC Display dedicated content')
+    name = lazy(_set_field_name, str)()
     model = OIDCDisplayDedicatedContent
     render_template = "djangocms_oidc/display_dedicated_content.html"
     change_form_template = 'djangocms_oidc/change_form/display_dedicated_content.html'

@@ -469,6 +469,17 @@ class TestOIDCDisplayDedicatedContentPlugin(CreateInstancesMixin, TestCase):
         html = renderer.render_plugin(model_instance, {'request': request})
         self.assertHTMLEqual(html, "<ul class='messagelist'><li class='error'>Email is not verified.</li></ul>")
 
+    def test_default_name(self):
+        model_instance = self._create_model(OIDCDisplayDedicatedContentPlugin)
+        plugin_instance = model_instance.get_plugin_class_instance()
+        self.assertEqual(str(plugin_instance), "OIDC Display dedicated content")
+
+    @override_settings(DJANGOCMS_OIDC_DISPLAY_DEDICATED_CONTENT_NAME="If")
+    def test_custom_name(self):
+        model_instance = self._create_model(OIDCDisplayDedicatedContentPlugin)
+        plugin_instance = model_instance.get_plugin_class_instance()
+        self.assertEqual(str(plugin_instance), "If")
+
 
 class TestOIDCListIdentifiersPlugin(CreateProviderTestCase):
 
