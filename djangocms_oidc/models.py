@@ -42,6 +42,9 @@ class OIDCRegisterConsumer(CMSPlugin):
     # client_name: (same as provider name)
     # logo_uri:
 
+    class Meta:
+        verbose_name_plural = _("OIDC register consumers")
+
     def __str__(self):
         return self.name
 
@@ -95,6 +98,9 @@ class OIDCProvider(CMSPlugin):
     logout_url = models.URLField(verbose_name=_('Logout URL'), null=True, blank=True)
 
     progress_code = "--PROGRESS--"
+
+    class Meta:
+        verbose_name_plural = _("OIDC providers")
 
     def __str__(self):
         return self.name
@@ -277,6 +283,9 @@ class OIDCIdentifier(CMSPlugin):
     provider = models.ForeignKey(OIDCProvider, on_delete=models.CASCADE)
     uident = models.CharField(verbose_name=_('Identifier'), max_length=255, unique=True,
                               help_text=_("Provider unique identifier."))
+
+    class Meta:
+        verbose_name_plural = _("OIDC identifiers")
 
 
 def get_display_content_settings():

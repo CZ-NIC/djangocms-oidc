@@ -198,6 +198,18 @@ msgstr "OIDC Zobrazit atribut"
 msgid "OIDC Show attribute Country"
 msgstr "OIDC Zobrazit atribut Země"
 
+msgid "OIDC authentication"
+msgstr "OIDC autentizace"
+
+msgid "OIDC identifiers"
+msgstr "OIDC identifikátory"
+
+msgid "OIDC providers"
+msgstr "OIDC poskytovatelé"
+
+msgid "OIDC register consumers"
+msgstr "OIDC registrace konsumerů"
+
 msgid "Only authenticated user"
 msgstr "Jen přihlášený uživatel"
 
