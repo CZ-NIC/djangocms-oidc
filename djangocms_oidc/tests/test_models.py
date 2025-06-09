@@ -4,7 +4,6 @@ import requests_mock
 from django.core import cache
 from django.core.exceptions import ValidationError
 from django.test import SimpleTestCase, TestCase, override_settings
-from django.utils import timezone
 from freezegun import freeze_time
 
 from djangocms_oidc.models import (
@@ -170,7 +169,7 @@ class TestOIDCProvider(TestCase):
         self.assertEqual(data, {
             'client_id': '1d9G0Oid4E5V',
             'client_secret': '5ed3a93b14cb5f1fdb97cb3dde1daddade443753eeb84432320b78a2',
-            'expires_at': datetime.datetime(2020, 10, 7, 13, 0, tzinfo=timezone.utc),
+            'expires_at': datetime.datetime(2020, 10, 7, 13, 0, tzinfo=datetime.timezone.utc),
         })
 
     def test_get_registration_consumer_info_managed(self):

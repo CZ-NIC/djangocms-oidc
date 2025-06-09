@@ -59,7 +59,7 @@ class TestHelpers(TestCase):
         OIDCIdentifier.objects.create(user=self.user, provider=self.provider, uident="1234567890")
         formset = helpers.get_user_identifiers_formset(self.user)
         self.assertFalse(formset.is_bound)
-        self.assertQuerysetEqual(formset.get_queryset().values_list('uident', flat=True), [
+        self.assertQuerySetEqual(formset.get_queryset().values_list('uident', flat=True), [
             '1234567890'], transform=str)
 
     def test_check_required_handovered(self):

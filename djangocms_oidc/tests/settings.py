@@ -82,6 +82,8 @@ CMS_CONFIRM_VERSION4 = True
 SITE_ID = 1
 ROOT_URLCONF = 'djangocms_oidc.tests.urls'
 
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 OIDC_AUTHENTICATE_CLASS = "djangocms_oidc.views.DjangocmsOIDCAuthenticationRequestView"
 OIDC_CALLBACK_CLASS = "djangocms_oidc.views.DjangocmsOIDCAuthenticationCallbackView"
 

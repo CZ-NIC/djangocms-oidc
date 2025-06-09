@@ -147,7 +147,7 @@ class OIDCProvider(CMSPlugin):
             duration = None
         else:
             expires_at = datetime.datetime.fromtimestamp(data['client_secret_expires_at'])
-            expires_at = timezone.make_aware(expires_at, timezone.utc)
+            expires_at = timezone.make_aware(expires_at, datetime.timezone.utc)
             duration = expires_at.timestamp() - timezone.now().timestamp()
         logger.info(f"Expires at {expires_at}")
         content = {
