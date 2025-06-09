@@ -403,10 +403,7 @@ class TestOIDCDisplayDedicatedContentPlugin(CreateInstancesMixin, TestCase):
             **attrs
         )
         instance.save()
-        if parent_instance.child_plugin_instances is None:
-            parent_instance.child_plugin_instances = [instance]
-        else:
-            parent_instance.child_plugin_instances.append(instance)
+        parent_instance.child_plugin_instances = [instance]
         return instance
 
     def test_plugin_context_conditions_empty(self):
@@ -461,7 +458,6 @@ class TestOIDCDisplayDedicatedContentPlugin(CreateInstancesMixin, TestCase):
     def test_plugin_html_conditions_email_not_verified(self):
         model_instance = self._create_model(OIDCDisplayDedicatedContentPlugin, conditions='email_verified')
         self._create_plugin_content(model_instance)
-        self._create_plugin_content(model_instance)
         request = self._create_request()
         request.session[DJANGOCMS_USER_SESSION_KEY] = {'email': 'mail@foo.foo'}
         request.current_page = None
@@ -496,11 +492,11 @@ class TestOIDCListIdentifiersPlugin(CreateProviderTestCase):
         model_instance = self._create_model(OIDCListIdentifiersPlugin)
         plugin_instance = model_instance.get_plugin_class_instance()
         request = self._create_request()
-        request.user = get_user_model()()
+        request.user = get_user_model().objects.create(username="admin", is_superuser=True)
         context = plugin_instance.render({'request': request}, model_instance, None)
         self.assertIsInstance(context['instance'], CMSPlugin)
         self.assertFalse(context['user_has_identifiers'])
-        self.assertQuerysetEqual(context['formset'].get_queryset().values_list('uident', flat=True), [])
+        self.assertQuerySetEqual(context['formset'].get_queryset().values_list('uident', flat=True), [])
 
     def test_plugin_context_user_with_identifier(self):
         model_instance = self._create_model(OIDCListIdentifiersPlugin)
@@ -514,13 +510,13 @@ class TestOIDCListIdentifiersPlugin(CreateProviderTestCase):
         context = plugin_instance.render({'request': request}, model_instance, None)
         self.assertIsInstance(context['instance'], CMSPlugin)
         self.assertTrue(context['user_has_identifiers'])
-        self.assertQuerysetEqual(context['formset'].get_queryset().values_list('uident', flat=True), [
+        self.assertQuerySetEqual(context['formset'].get_queryset().values_list('uident', flat=True), [
             '1234567890'], transform=str)
 
     def test_plugin_html(self):
         model_instance = self._create_model(OIDCListIdentifiersPlugin)
         request = self._create_request()
-        request.user = get_user_model()()
+        request.user = get_user_model().objects.create(username="admin", is_superuser=True)
         renderer = ContentRenderer(request=RequestFactory())
         html = renderer.render_plugin(model_instance, {'request': request, 'user': request.user})
         self.assertHTMLEqual(html, """

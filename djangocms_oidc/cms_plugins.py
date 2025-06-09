@@ -92,6 +92,9 @@ class OIDCDisplayDedicatedContentPlugin(CMSPluginBase):
     cache = False
     allow_children = True
 
+    def __str__(self):
+        return str(self.name)
+
     def render(self, context, instance, placeholder):
         context = super().render(context, instance, placeholder)
         user_info = context['request'].session.get(DJANGOCMS_USER_SESSION_KEY)

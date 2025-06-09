@@ -239,7 +239,7 @@ class TestOIDCDeleteIdentifiersView(CollectMessagesMixin, CMSTestCase):
         self.assertEqual(self._get_messages(response.wsgi_request), [
             (messages.SUCCESS, 'Identifier has been deleted.'),
         ])
-        self.assertQuerysetEqual(OIDCIdentifier.objects.all().values_list('uident', flat=True), [
+        self.assertQuerySetEqual(OIDCIdentifier.objects.all().values_list('uident', flat=True), [
             '9876543210'], transform=str)
 
     def test_delete_identifier_by_ajax(self):

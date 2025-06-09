@@ -349,7 +349,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         self.assertEqual(response, user)
         mock_verify_claims.assert_called_with({
             'email': 'foo@foo.foo', 'openid2_id': 'oid', 'user_info_created_at': 1602528942.0})
-        self.assertQuerysetEqual(OIDCIdentifier.objects.all().values_list('uident', flat=True), ['oid'], transform=str)
+        self.assertQuerySetEqual(OIDCIdentifier.objects.all().values_list('uident', flat=True), ['oid'], transform=str)
         self.assertEqual(self._get_messages(self.backend.request), [
             (messages.SUCCESS, 'The account has been successfully paired with the provider.')
         ])
@@ -381,7 +381,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         user = get_user_model().objects.create(username="user")
         OIDCIdentifier.objects.create(user=user, provider=self.provider, uident=openid2_id)
         self.backend.create_identifier_if_missing(self.backend.request, user, self.provider, openid2_id)
-        self.assertQuerysetEqual(OIDCIdentifier.objects.all().values_list('uident', flat=True), [openid2_id],
+        self.assertQuerySetEqual(OIDCIdentifier.objects.all().values_list('uident', flat=True), [openid2_id],
                                  transform=str)
 
     def test_not_authenticated_user_zero(self):
@@ -417,7 +417,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         self.backend.request._messages = FallbackStorage(self.backend.request)
         response = self.backend.not_authenticated_user(self.backend.request, user_info, self.plugin)
         self.assertEqual(response, user)
-        self.assertQuerysetEqual(OIDCIdentifier.objects.filter(user=user).values_list('uident', flat=True), ['4242'],
+        self.assertQuerySetEqual(OIDCIdentifier.objects.filter(user=user).values_list('uident', flat=True), ['4242'],
                                  transform=str)
         self.assertEqual(self._get_messages(self.backend.request), [
             (messages.SUCCESS, 'The account has been successfully paired with the provider.')
@@ -429,7 +429,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         self.backend.request._messages = FallbackStorage(self.backend.request)
         response = self.backend.not_authenticated_user(self.backend.request, user_info, self.plugin)
         self.assertIsNone(response)
-        self.assertQuerysetEqual(OIDCIdentifier.objects.filter(user=user).values_list('uident', flat=True), ['4242'],
+        self.assertQuerySetEqual(OIDCIdentifier.objects.filter(user=user).values_list('uident', flat=True), ['4242'],
                                  transform=str)
         self.assertEqual(self._get_messages(self.backend.request), [
             (messages.SUCCESS, 'The account has been successfully paired with the provider.'),
@@ -452,7 +452,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         response = self.backend.not_authenticated_user(self.backend.request, user_info, plugin)
         user = get_user_model().objects.get(email='foo@foo.foo')
         self.assertEqual(response, user)
-        self.assertQuerysetEqual(OIDCIdentifier.objects.all(), [])
+        self.assertQuerySetEqual(OIDCIdentifier.objects.all(), [])
         self.assertEqual(self._get_messages(self.backend.request), [
             (messages.SUCCESS, 'A new account has been created with the username '
                                'aLOwvSRJuFVqFX111xmv5vYGuXk and email foo@foo.foo.'),
@@ -465,7 +465,7 @@ class TestDjangocmsOIDCAuthenticationBackend(TestCase):
         response = self.backend.not_authenticated_user(self.backend.request, user_info, plugin)
         user = get_user_model().objects.get(email='foo@foo.foo')
         self.assertEqual(response, user)
-        self.assertQuerysetEqual(OIDCIdentifier.objects.filter(user=user).values_list('uident', flat=True), ['4242'],
+        self.assertQuerySetEqual(OIDCIdentifier.objects.filter(user=user).values_list('uident', flat=True), ['4242'],
                                  transform=str)
         self.assertEqual(self._get_messages(self.backend.request), [
             (messages.SUCCESS, 'A new account has been created with the username '
