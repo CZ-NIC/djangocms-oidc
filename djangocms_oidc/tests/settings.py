@@ -78,6 +78,7 @@ LANGUAGES = [
     ('cs', 'Czech'),
 ]
 
+CMS_CONFIRM_VERSION4 = True
 SITE_ID = 1
 ROOT_URLCONF = 'djangocms_oidc.tests.urls'
 
