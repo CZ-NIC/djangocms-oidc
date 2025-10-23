@@ -5,6 +5,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [5.1.0] - 2025-10-23
+
+* Upgrade to django-cms>=4.1,<6.
+
 ## [5.0.0] - 2025-06-09
 
 - Upgrade versions to django-cms 4.1.
@@ -53,7 +58,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Create a group of plugins to manage OIDC consumer.
 
 
-[Unreleased]: https://github.com/CZ-NIC/djangocms-oidc/compare/5.0.0...master
+[Unreleased]: https://github.com/CZ-NIC/djangocms-oidc/compare/5.1.0...master
+[5.1.0]: https://github.com/CZ-NIC/djangocms-oidc/compare/5.0.0...5.1.0
 [5.0.0]: https://github.com/CZ-NIC/djangocms-oidc/compare/4.2.0...5.0.0
 [4.2.0]: https://github.com/CZ-NIC/djangocms-oidc/compare/4.1.2...4.2.0
 [4.1.2]: https://github.com/CZ-NIC/djangocms-oidc/compare/4.1.1...4.1.2
